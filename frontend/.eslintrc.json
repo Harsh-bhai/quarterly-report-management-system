@@ -1,3 +1,7 @@
 {
-  "extends": ["next/babel","next/core-web-vitals"]
+  "extends": ["next","next/babel", "next/core-web-vitals"],
+  "rules": {
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".tsx"] }],
+    "react/react-in-jsx-scope": "off"
+  }
 }
