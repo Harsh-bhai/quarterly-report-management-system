@@ -4,8 +4,8 @@ const onChange = () => {
   return (
     <div>
         <form
-    className="mr-4 backdrop-blur-xl shadow-md rounded-xl bg-white px-8 pt-6 pb-8 mb-4 flex flex-col my-2 w-full mx-auto">
-    <div className="text-md w-full text-center sm:text-2xl md:text-3xl font-medium bg-black py-1 text-white mb-2"
+    className="mr-4 backdrop-blur-xl shadow-md rounded-xl bg-white px-4 pt-6 pb-8 mb-4 flex flex-col my-2 w-11/12  mx-auto">
+    <div className="text-md rounded-lg w-full text-center sm:text-2xl md:text-3xl font-medium bg-black py-1 text-white mb-2"
          id="formName" name=''>Published Research
          Articles/Papers in Journals/Periodicals</div>
     <div className="md:w-full px-3 mb-3 md:mb-0">

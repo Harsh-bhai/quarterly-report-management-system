@@ -1,8 +1,10 @@
 import React from "react";
 import { useState } from "react";
 import One from "./1";
+import Two from "./2";
 const Forms = () => {
   const [selectedvalue, setSelectedvalue] = useState()
+  const [quarter, setQuarter] = useState()
   const selectOptions=[
     {
         "text": "Details of the Published Research Articles/Papers in Journals/Periodicals",
@@ -130,41 +132,56 @@ const Forms = () => {
     <div>
       {/* here */}
       <div>
-        <div className="min-h-screen md:mx-20">
-          <div className="flex space-x-5">
+        <div className="min-h-screen ">
+          <div className="flex justify-center">
             {/* dashBoard start */}
             {/* component */}
-            <div className="mr-4 backdrop-blur-xl shadow-md rounded-xl bg-white px-8 pt-6 pb-8 mb-4 flex flex-col my-2 w-11/12 mx-auto">
-              <div className="relative space-y-5">
-                <div>
+            <div className="mr-4 backdrop-blur-xl shadow-md rounded-xl bg-white px-4 pt-6 pb-8 mb-4 flex flex-col my-2   mx-auto">
+              <div className="relative md:ml-28">
+                <div className="">
+                <label
+                    htmlFor="formType"
+                    className="text-sm text-center md:text-3xl font-bold md:font-semibold tracking-wide mb-1 ml-4 md:p-4"
+                  >
+                    Select Month Quarter
+                  </label>
+                <select onChange={(e) => setQuarter(e.target.value)} className="block  my-10 w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8  rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <option value="" disabled selected>Select Month Quarter</option>
+                      <option  className="text-sm" value="1">Q1.Jan-Mar</option>
+                      <option  className="text-sm" value="1">Q2.Apr-Jun</option>
+                      <option  className="text-sm" value="1">Q3.Jul-Sep</option>
+                      <option  className="text-sm" value="1">Q4.Oct-Dec</option>
+                    
+                  </select>
                   <label
                     htmlFor="formType"
-                    className="text-sm text-center md:text-3xl font-medium tracking-wide mb-1"
+                    className="text-sm text-center md:text-3xl font-bold md:font-semibold tracking-wide mb-1 ml-4 md:p-4"
                   >
                     Select a form according to your achievement
                   </label>
-                  <select onChange={(e) => setSelectedvalue(e.target.value)} className="block my-10 w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8 rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
+                  <select onChange={(e) => {setSelectedvalue(e.target.value)}} className="block  my-10 w-full bg-gray-200 border border-gray-200 text-gray-700 py-3 px-4 pr-8  rounded leading-tight focus:outline-none focus:bg-white focus:border-gray-500">
                   <option value="" disabled selected>Select a form</option>
                     {selectOptions.map((option) => (
                       <option key={option.number} className="text-sm" value={option.number}>{option.number}.{option.text}</option>
                     ))}
                     
                   </select>
+                  
 
                   {/* ... other inputs ... */}
                 </div>
                 {/* ... other inputs ... */}
               </div>
-              {(() => {
+              {quarter && selectedvalue && (() => {
         switch (selectedvalue) {
           case "1":
             return <One/>
-          case 'option2':
-            return <p>Option 2 content</p>;
+          case '2':
+            return <Two/>;
           case 'option3':
             return <p>Option 3 content</p>;
           default:
-            return <p>Default content</p>;
+            return <p className="text-2xl font-semibold text-center">Select a Form to fill details</p>;
         }
       })()}
             </div>
