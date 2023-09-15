@@ -6,8 +6,17 @@ import { useRef } from 'react';
 import { MdAccountCircle } from 'react-icons/md';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { AiFillCloseCircle } from 'react-icons/ai';
+import { useState,useEffect } from 'react';
+import Cookies from 'js-cookie';
 import Link from 'next/link';
-const Navbar = () => {
+const Navbar = ({logout}) => {
+  const [isLogin, setIsLogin] = useState(false)
+  useEffect(() => {
+    if (Cookies.get('jwtoken')) {
+      setIsLogin(true)
+    }
+  }, [])
+  
   const toggle = () => {
     if ((ref.current.classList.contains("-translate-x-full"))) {
       ref.current.classList.remove("-translate-x-full")
@@ -31,7 +40,8 @@ const Navbar = () => {
           <span className='absolute top-8 left-8
           'onClick={toggle} ><AiFillCloseCircle className='text-4xl font-extralight md:hidden' /></span>
           <div className="flex flex-col md:flex-row md:items-center md:space-x-8  mainitems my-24 md:my-4 space-y-6 md:space-y-0">
-            <Link  href={"/studentlogin"}><div onClick={toggle} className='hover:text-gray-600 text-gray-700 cursor-pointer'>Login</div></Link>
+            {isLogin?<Link  href={"/studentlogin"}><div onClick={logout} className='hover:text-gray-600 text-gray-700 cursor-pointer'>Logout</div></Link>:
+            <Link  href={"/studentlogin"}><div onClick={toggle} className='hover:text-gray-600 text-gray-700 cursor-pointer'>Login</div></Link>}
             <Link  href={"/forms"}><div onClick={toggle} className='hover:text-gray-600 text-gray-700 cursor-pointer'>forms</div></Link>
             <Link  href={"/update"}><div onClick={toggle} className= 'hover:text-gray-600 text-gray-700 cursor-pointer'>Update</div></Link>
             {/* <Link  href={"/about"}><div onClick={toggle} className='hover:text-gray-600 text-gray-700 cursor-pointer'>Contact Us</div></Link> */}

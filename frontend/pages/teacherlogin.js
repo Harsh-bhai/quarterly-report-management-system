@@ -1,10 +1,105 @@
-import Link from 'next/link'
-import React from 'react'
+import React from "react";
+import Link from "next/link";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
+import cookies from "js-cookie"
 
-const TeacherLogin = () => {
-  return (
+const TeacherLogin = ({reloadNav}) => {
+  let Router = useRouter();
+  useEffect(() => {
+    if (cookies.get("jwtoken")) {
+      toast.success('Logged In SucessFully', {
+        position: "top-right",
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        })
+        // setTimeout(1000);
+        Router.push("/forms");
+       
+    }
+  }, []);
+
+  const [identifier, setidentifier] = useState("");
+  const [password, setpassword] = useState("");
+
+  const handlechange = (e) => {
+    if (e.target.name == "email") {
+      setidentifier(e.target.value);
+    }
+    if (e.target.name == "password") {
+      setpassword(e.target.value);
+    }
+  };
+
+  const handlesubmit = async (e) => {
+    console.log(process.env.NEXT_PUBLIC_BHOST)
+    e.preventDefault();
+    const data = { identifier, password };
+
+   
+   
+        let res = await fetch(`${process.env.NEXT_PUBLIC_BHOST}/api/auth/local`, {
+          method: "POST", // or 'PUT'
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+            // Authorization: `Bearer ${localStorage.getItem("jwtoken")}`,
+          },
+          body: JSON.stringify(data),
+        })
+        let response=await res.json()
+        if(response.error){
+          toast.error(`Invalid Credentials`, {
+            position: "top-right",
+            autoClose: 1000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            });
+          console.log(response.error)
+        }
+        else{
+          // Router.push('/')
+          cookies.set("jwtoken",response.jwt)
+
+          
+          reloadNav()
+            
+            toast.success('Logged In SucessFully!', {
+              position: "top-right",
+              autoClose: 1000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              });
+        Router.push("/forms")
+            
+        }
+        setpassword("");
+        setidentifier("");
+        
+        
+
+      
+  };
+  return (  
+    
     <div>
-      <form action="page.name" method="POST" id="form" name="form">
+
+      <form onSubmit={handlesubmit} id="form" name="form">
         <div className="relative ">
           <div
             className="flex flex-col items-center justify-between pt-0 pb-0 mt-0 mr-auto mb-0 ml-auto max-w-7xl xl:px-5 lg:flex-row">
@@ -32,13 +127,13 @@ const TeacherLogin = () => {
                 <div
                   className="flex flex-col items-start justify-start pt-10 pr-10 pb-10 pl-10 rounded-2xl relative z-10 w-full mt-10">
                   <p className="w-full text-4xl font-medium text-center leading-snug font-serif">Teacher</p>
-                  <p className="w-full text-center text-xl">Sign In</p>
+                  <p className="w-full text-center text-xl">Log In</p>
                   <div className="w-full mt-6 mr-0 mb-0 ml-0 relative space-y-8">
                     <div className="relative">
                       <p
                         className="bg-white rounded-lg shadow-sm pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600 absolute">
-                        Username</p>
-                      <input name="userName" placeholder="John" type="text"
+                        Email</p>
+                      <input name="email" onChange={handlechange} placeholder="John" type="text"
                         className="border placeholder-gray-400 focus:outline-none focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white border-gray-300 rounded-md" />
                       <div className="text-red-700 text-xs opacity-0" id="nameWaring">Enter the
                         username</div>
@@ -47,7 +142,7 @@ const TeacherLogin = () => {
                       <p
                         className="bg-white rounded-lg shadow-sm pt-0 pr-2 pb-0 pl-2 -mt-3 mr-0 mb-0 ml-2 font-medium text-gray-600 absolute">
                         Password</p>
-                      <input name="userPassword" placeholder="Password" type="password"
+                      <input name="password" onChange={handlechange} placeholder="Password" type="password"
                         className="border placeholder-gray-400 focus:outline-none focus:border-black w-full pt-4 pr-4 pb-4 pl-4 mt-2 mr-0 mb-0 ml-0 text-base block bg-white border-gray-300 rounded-md" />
                       <div className="text-red-700 text-xs opacity-0" id="passwordWarning">Enter the
                         Password</div>
@@ -55,13 +150,13 @@ const TeacherLogin = () => {
                     <div 
                     // onClick={checkForm}
                      className="relative">
-                      <a className="w-full inline-block pt-4 pr-5 pb-4 pl-5 text-xl font-medium text-center text-white bg-indigo-500 rounded-lg">Submit</a>
+                      <button className="w-full inline-block pt-4 pr-5 pb-4 pl-5 text-xl font-medium text-center text-white bg-indigo-500 rounded-lg">Submit</button>
                     </div>
                   </div>
                   <div className="relative flex space-x-5 w-full mt-5">
-                    <Link href={"/studentlogin"} className="w-fit mx-auto inline-block px-2 py-1 text-md font-medium text-center text-white bg-black rounded-lg ">you are a Student</Link>
+                    <Link href="/studentlogin" className="w-fit mx-auto inline-block px-2 py-1 text-md font-medium text-center text-white bg-black rounded-lg ">you are a Student</Link>
                   </div>
-                </div>  
+                </div>
               </div>
             </div>
           </div>

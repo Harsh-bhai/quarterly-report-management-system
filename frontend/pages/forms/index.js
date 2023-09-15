@@ -2,6 +2,35 @@ import React from "react";
 import { useState } from "react";
 import One from "./1";
 import Two from "./2";
+import Three from "./3";
+import Four from "./4";
+import Five from "./5";
+import Six from "./6";
+import Seven from "./7";
+import Eight from "./8";
+import Nine from "./9";
+import Ten from "./10";
+import Eleven from "./11";
+import Twelve from "./12";
+import Thirteen from "./13";
+import Fourteen from "./14";
+import Fifteen from "./15";
+import Sixteen from "./16";
+import Seventeen from "./17";
+import Eighteen from "./18";
+import Nineteen from "./19";
+import Twenty from "./20";
+import TwentyOne from "./21";
+import TwentyTwo from "./22";
+import TwentyThree from "./23";
+import TwentyFour from "./24";
+import TwentyFive from "./25";
+import TwentySix from "./26";
+import TwentySeven from "./27";
+import TwentyEight from "./28";
+import TwentyNine from "./29";
+import Thirty from "./30";
+
 const Forms = () => {
   const [selectedvalue, setSelectedvalue] = useState()
   const [quarter, setQuarter] = useState()
@@ -174,12 +203,67 @@ const Forms = () => {
               </div>
               {quarter && selectedvalue && (() => {
         switch (selectedvalue) {
-          case "1":
-            return <One/>
+          case '1':
+            return <One />;
           case '2':
-            return <Two/>;
-          case 'option3':
-            return <p>Option 3 content</p>;
+            return <Two />;
+          case '3':
+            return <Three />;
+          case '4':
+            return <Four />;
+          case '5':
+            return <Five />;
+          case '6':
+            return <Six />;
+          case '7':
+            return <Seven />;
+          case '8':
+            return <Eight />;
+          case '9':
+            return <Nine />;
+          case '10':
+            return <Ten />;
+          case '11':
+            return <Eleven />;
+          case '12':
+            return <Twelve />;
+          case '13':
+            return <Thirteen />;
+          case '14':
+            return <Fourteen />;
+          case '15':
+            return <Fifteen />;
+          case '16':
+            return <Sixteen />;
+          case '17':
+            return <Seventeen />;
+          case '18':
+            return <Eighteen />;
+          case '19':
+            return <Nineteen />;
+          case '20':
+            return <Twenty />;
+          case '21':
+            return <TwentyOne />;
+          case '22':
+            return <TwentyTwo />;
+          case '23':
+            return <TwentyThree />;
+          case '24':
+            return <TwentyFour />;
+          case '25':
+            return <TwentyFive />;
+          case '26':
+            return <TwentySix />;
+          case '27':
+            return <TwentySeven />;
+          case '28':
+            return <TwentyEight />;
+          case '29':
+            return <TwentyNine />;
+          case '30':
+            return <Thirty />;
+          
           default:
             return <p className="text-2xl font-semibold text-center">Select a Form to fill details</p>;
         }

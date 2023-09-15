@@ -11,17 +11,19 @@ const TeacherLogin = ({reloadNav}) => {
   useEffect(() => {
     if (cookies.get("jwtoken")) {
       toast.success('Logged In SucessFully', {
-        position: "bottom-right",
-        autoClose: 1000,
+        position: "top-right",
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
         theme: "light",
-        });
+        })
+        // setTimeout(1000);
+        Router.push("/forms");
+       
     }
-      Router.push("/forms");
   }, []);
 
   const [identifier, setidentifier] = useState("");
@@ -54,8 +56,8 @@ const TeacherLogin = ({reloadNav}) => {
         })
         let response=await res.json()
         if(response.error){
-          toast.error(`${response.error.message}`, {
-            position: "bottom-right",
+          toast.error(`Invalid Credentials`, {
+            position: "top-right",
             autoClose: 1000,
             hideProgressBar: false,
             closeOnClick: true,
@@ -74,7 +76,7 @@ const TeacherLogin = ({reloadNav}) => {
           reloadNav()
             
             toast.success('Logged In SucessFully!', {
-              position: "bottom-right",
+              position: "top-right",
               autoClose: 1000,
               hideProgressBar: false,
               closeOnClick: true,
@@ -83,11 +85,12 @@ const TeacherLogin = ({reloadNav}) => {
               progress: undefined,
               theme: "light",
               });
+        Router.push("/forms")
             
         }
         setpassword("");
         setidentifier("");
-        Router.push("/forms")
+        
         
 
       
@@ -95,18 +98,7 @@ const TeacherLogin = ({reloadNav}) => {
   return (  
     
     <div>
-      <ToastContainer
-position="bottom-right"
-autoClose={5000}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="light"
-/>
+
       <form onSubmit={handlesubmit} id="form" name="form">
         <div className="relative ">
           <div
@@ -115,7 +107,7 @@ theme="light"
               className="flex flex-col items-center w-full pt-5 pb-20 px-2 lg:pt-20 lg:flex-row space-x-0 lg:space-x-40">
               <div className="btn-moving w-full bg-cover relative max-w-md lg:max-w-2xl lg:w-7/12">
                 <div className=" bg-white flex flex-col items-center justify-center w-full h-full relative lg:pr-10">
-                  <div className="shadow-[2px_0px_10px_gray] rounded-full p-12 bg-white">
+                  <div className="shadow-[2px_0px_10px_gray] rounded-full p-12 bg-white ">
                     <img draggable={false} id="motion" src="/logo.png"
                       alt="Sign up" className="w-32 h-32 sm:h-56 sm:w-56  shdow-2xl" />
                   </div>
@@ -129,13 +121,13 @@ theme="light"
               </div>
 
               <div
-                className="w-full mt-10 mr-0 mb-0 ml-0 relative z-10 max-w-2xl lg:mt-0 lg:w-5/12 bg-gray-300 bg-opacity-30 shadow-lg rounded-lg backdrop-blur-3xl mix-blend-color-dodge">
+                className="w-full  mr-0 mb-0 ml-0 relative z-10 max-w-2xl lg:mt-0 lg:w-5/12 bg-gray-300 bg-opacity-30 shadow-lg rounded-lg backdrop-blur-3xl mix-blend-color-dodge">
                 <div className="md:w-40  rounded-lg mix-blend-color-dodge h-40 bg-yellow-500 absolute -left-16 -top-10 "></div>
                 <div className="md:w-40  rounded-lg mix-blend-color-dodge h-40 bg-green-500 absolute -right-16 -bottom-10"></div>
                 <div
                   className="flex flex-col items-start justify-start pt-10 pr-10 pb-10 pl-10 rounded-2xl relative z-10 w-full mt-10">
                   <p className="w-full text-4xl font-medium text-center leading-snug font-serif">Student</p>
-                  <p className="w-full text-center text-xl">Sign In</p>
+                  <p className="w-full text-center text-xl">Log In</p>
                   <div className="w-full mt-6 mr-0 mb-0 ml-0 relative space-y-8">
                     <div className="relative">
                       <p
@@ -155,10 +147,11 @@ theme="light"
                       <div className="text-red-700 text-xs opacity-0" id="passwordWarning">Enter the
                         Password</div>
                     </div>
+                    <Link href={"/forgotpassword"} className="text-cyan-800 cursor-pointer">Forgot Password</Link>
                     <div 
                     // onClick={checkForm}
                      className="relative">
-                      <button className="w-full inline-block pt-4 pr-5 pb-4 pl-5 text-xl font-medium text-center text-white bg-indigo-500 rounded-lg">Submit</button>
+                      <button className="w-full inline-block pt-4 pr-5 pb-4 pl-5 text-xl font-medium text-center text-white bg-cyan-500 rounded-lg">Submit</button>
                     </div>
                   </div>
                   <div className="relative flex space-x-5 w-full mt-5">
