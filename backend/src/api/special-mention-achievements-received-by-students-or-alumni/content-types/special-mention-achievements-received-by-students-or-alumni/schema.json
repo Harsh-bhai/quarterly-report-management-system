@@ -1,0 +1,34 @@
+{
+  "kind": "collectionType",
+  "collectionName": "special_mention_achievements_received_by_students_or_alumnis",
+  "info": {
+    "singularName": "special-mention-achievements-received-by-students-or-alumni",
+    "pluralName": "special-mention-achievements-received-by-students-or-alumnis",
+    "displayName": "T30_Special_Mention_achievements_Received_by_students_or_Alumni",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "name": {
+      "type": "string"
+    },
+    "award_name": {
+      "type": "string"
+    },
+    "Name_of_the_Work_for_which_Award_is_received": {
+      "type": "string"
+    },
+    "Date_of_Award_Received": {
+      "type": "string"
+    },
+    "Name_of_Awarding_Organization": {
+      "type": "string"
+    },
+    "Level_of_Award_University_State_or_National_or_International": {
+      "type": "string"
+    }
+  }
+}

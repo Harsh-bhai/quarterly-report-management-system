@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "books_or_monographs_published_as_author_or_co_authors",
+  "info": {
+    "singularName": "books-or-monographs-published-as-author-or-co-author",
+    "pluralName": "books-or-monographs-published-as-author-or-co-authors",
+    "displayName": "T4_Books_or_Monographs_Published_as_Author_or_Co-Author",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Faculty_Name": {
+      "type": "string",
+      "required": true
+    },
+    "Title_Of_The_Book_or_Monographs": {
+      "type": "string"
+    },
+    "Whether_Sole_or_Co_Author": {
+      "type": "string"
+    },
+    "Publisher_with_city_country": {
+      "type": "string"
+    },
+    "Year_of_Publication": {
+      "type": "string"
+    },
+    "Type_of_the_Book_Local_or_National_or_International": {
+      "type": "string"
+    },
+    "ISSN": {
+      "type": "string"
+    },
+    "Quarter": {
+      "type": "string"
+    }
+  }
+}

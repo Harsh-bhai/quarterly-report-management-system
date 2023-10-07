@@ -1,0 +1,42 @@
+{
+  "kind": "collectionType",
+  "collectionName": "competitions_organized_or_participation_by_the_students",
+  "info": {
+    "singularName": "competitions-organized-or-participation-by-the-student",
+    "pluralName": "competitions-organized-or-participation-by-the-students",
+    "displayName": "T21_Competitions_Organized_or_Participation_by_the_Students",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "student_name": {
+      "type": "string",
+      "required": true
+    },
+    "branch": {
+      "type": "string",
+      "required": true
+    },
+    "Semester": {
+      "type": "string"
+    },
+    "Type_of_Competition": {
+      "type": "string"
+    },
+    "Organized_By": {
+      "type": "string"
+    },
+    "Organized_During": {
+      "type": "string"
+    },
+    "Level": {
+      "type": "string"
+    },
+    "Awards": {
+      "type": "string"
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "kind": "collectionType",
+  "collectionName": "short_term_training_program_attended_by_faculty_members",
+  "info": {
+    "singularName": "short-term-training-program-attended-by-faculty-member",
+    "pluralName": "short-term-training-program-attended-by-faculty-members",
+    "displayName": "T3_Short_Term_Training_Program_Attended_By_Faculty_Members",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Faculty_Name": {
+      "type": "string",
+      "required": true
+    },
+    "Name_of_the_workshop": {
+      "type": "string"
+    },
+    "organized_by": {
+      "type": "string"
+    },
+    "Place": {
+      "type": "string"
+    },
+    "Duration": {
+      "type": "string"
+    },
+    "Registration_fee_reimbursed_from_college": {
+      "type": "string"
+    },
+    "Special_Leave_Dates": {
+      "type": "string"
+    },
+    "Quarter": {
+      "type": "string"
+    }
+  }
+}

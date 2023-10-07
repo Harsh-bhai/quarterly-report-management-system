@@ -1,0 +1,73 @@
+{
+  "kind": "collectionType",
+  "collectionName": "details_of_the_published_research_articles_in_journals",
+  "info": {
+    "singularName": "details-of-the-published-research-articles-in-journal",
+    "pluralName": "details-of-the-published-research-articles-in-journals",
+    "displayName": "T1_Published Research Articles in Journals",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "required": true
+    },
+    "Authors": {
+      "type": "string",
+      "required": true
+    },
+    "Journal": {
+      "type": "string",
+      "required": true
+    },
+    "SNIP": {
+      "type": "float"
+    },
+    "SJR": {
+      "type": "float"
+    },
+    "H_Index": {
+      "type": "integer"
+    },
+    "Impact_Factor": {
+      "type": "float"
+    },
+    "ISSN": {
+      "type": "string"
+    },
+    "Publisher": {
+      "type": "string"
+    },
+    "Month": {
+      "type": "string"
+    },
+    "Year": {
+      "type": "string"
+    },
+    "Vol": {
+      "type": "string"
+    },
+    "Issue": {
+      "type": "string"
+    },
+    "DOI": {
+      "type": "string"
+    },
+    "Page_No": {
+      "type": "string"
+    },
+    "Citation": {
+      "type": "string"
+    },
+    "Indexed": {
+      "type": "string"
+    },
+    "Quarter": {
+      "type": "string"
+    }
+  }
+}

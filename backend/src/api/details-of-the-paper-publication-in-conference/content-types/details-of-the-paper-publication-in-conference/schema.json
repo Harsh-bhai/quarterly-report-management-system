@@ -1,0 +1,45 @@
+{
+  "kind": "collectionType",
+  "collectionName": "details_of_the_paper_publication_in_conferences",
+  "info": {
+    "singularName": "details-of-the-paper-publication-in-conference",
+    "pluralName": "details-of-the-paper-publication-in-conferences",
+    "displayName": "T2_Paper_Publication_in_Conferences_or_workshops_Attended_By_Faculty_Members",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "required": true
+    },
+    "Authors": {
+      "type": "string",
+      "required": true
+    },
+    "Whether_Sole_or_Corresponding_Author": {
+      "type": "string"
+    },
+    "Details_of_Publication": {
+      "type": "string"
+    },
+    "ISBN_or_ISSN": {
+      "type": "string"
+    },
+    "Status_of_The_Conference": {
+      "type": "string"
+    },
+    "Registration_fee_reimbursed_from_college": {
+      "type": "string"
+    },
+    "Special_Leave_Dates": {
+      "type": "string"
+    },
+    "Quarter": {
+      "type": "string"
+    }
+  }
+}

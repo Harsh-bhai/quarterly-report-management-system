@@ -1,0 +1,37 @@
+{
+  "kind": "collectionType",
+  "collectionName": "faculty_as_editor_members_of_editorial_board_of_journals",
+  "info": {
+    "singularName": "faculty-as-editor-members-of-editorial-board-of-journal",
+    "pluralName": "faculty-as-editor-members-of-editorial-board-of-journals",
+    "displayName": "T5_faculty_as_editor_members_of_editorial_board_of_journals",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Faculty_Name": {
+      "type": "string"
+    },
+    "Title_of_book_or_journal": {
+      "type": "string"
+    },
+    "Whether_Sole_or_Co_Author": {
+      "type": "string"
+    },
+    "Publisher_with_city_or_country": {
+      "type": "string"
+    },
+    "Type_of_the_Book_Local_or_National_or_International": {
+      "type": "string"
+    },
+    "ISSN": {
+      "type": "string"
+    },
+    "Quarter": {
+      "type": "string"
+    }
+  }
+}

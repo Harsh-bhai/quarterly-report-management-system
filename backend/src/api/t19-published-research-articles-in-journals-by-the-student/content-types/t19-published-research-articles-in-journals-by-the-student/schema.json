@@ -1,0 +1,49 @@
+{
+  "kind": "collectionType",
+  "collectionName": "t19_published_research_articles_in_journals_by_the_students",
+  "info": {
+    "singularName": "t19-published-research-articles-in-journals-by-the-student",
+    "pluralName": "t19-published-research-articles-in-journals-by-the-students",
+    "displayName": "T19_Published_Research_Articles_in_Journals_by_the_students",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "student_name": {
+      "type": "string"
+    },
+    "Title": {
+      "type": "string"
+    },
+    "Journal": {
+      "type": "string"
+    },
+    "Impact_Factor": {
+      "type": "string"
+    },
+    "ISSN": {
+      "type": "string"
+    },
+    "Publisher": {
+      "type": "string"
+    },
+    "Month": {
+      "type": "string"
+    },
+    "Year": {
+      "type": "string"
+    },
+    "Vol": {
+      "type": "string"
+    },
+    "Page_No": {
+      "type": "string"
+    },
+    "Quarter": {
+      "type": "string"
+    }
+  }
+}
