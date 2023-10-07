@@ -7,8 +7,10 @@ import { useRouter } from "next/router";
 import cookies from "js-cookie"
 
 const TeacherLogin = ({reloadNav}) => {
+  
   let Router = useRouter();
   useEffect(() => {
+    cookies.set("role","student")
     if (cookies.get("jwtoken")) {
       toast.success('Logged In SucessFully', {
         position: "top-right",

@@ -6,4 +6,4 @@ const Twenty = () => {
   )
 }
 
-export default 20
+export default Twenty

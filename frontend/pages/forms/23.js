@@ -6,4 +6,4 @@ const TwentyThree = () => {
   )
 }
 
-export default 23
+export default TwentyThree

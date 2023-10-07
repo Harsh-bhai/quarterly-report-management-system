@@ -9,6 +9,7 @@ import cookies from "js-cookie"
 const TeacherLogin = ({reloadNav}) => {
   let Router = useRouter();
   useEffect(() => {
+    cookies.set("role","teacher")
     if (cookies.get("jwtoken")) {
       toast.success('Logged In SucessFully', {
         position: "top-right",
@@ -150,7 +151,7 @@ const TeacherLogin = ({reloadNav}) => {
                     <div 
                     // onClick={checkForm}
                      className="relative">
-                      <button className="w-full inline-block pt-4 pr-5 pb-4 pl-5 text-xl font-medium text-center text-white bg-indigo-500 rounded-lg">Submit</button>
+                      <button className="w-full inline-block pt-4 pr-5 pb-4 pl-5 text-xl font-medium text-center text-white bg-cyan-500 rounded-lg">Submit</button>
                     </div>
                   </div>
                   <div className="relative flex space-x-5 w-full mt-5">

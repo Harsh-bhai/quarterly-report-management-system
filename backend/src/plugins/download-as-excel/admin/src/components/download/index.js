@@ -39,10 +39,10 @@ const DownloadButton = () => {
 
         const headers = {
           Accept: "*/*",
-          Authorization:
-            "Bearer " +
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk1ODQ0NTc4LCJleHAiOjE2OTg0MzY1Nzh9.Jb1rzLpmKxstQ9AGfxWf6vTsSi2CEvcQStQk2TYRTvk",
-          // 'Authorization': "Bearer "+token,
+          // Authorization:
+          //   "Bearer " +
+          //   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk1ODQ0NTc4LCJleHAiOjE2OTg0MzY1Nzh9.Jb1rzLpmKxstQ9AGfxWf6vTsSi2CEvcQStQk2TYRTvk",
+          'Authorization': `Bearer ${token.replaceAll('"', '')}`,
           "Content-Type": "application/json",
         };
         console.log(updatedUrl, "updatedurl");
