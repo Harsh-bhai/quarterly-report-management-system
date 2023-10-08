@@ -17,25 +17,24 @@
       "required": true
     },
     "branch": {
-      "type": "string",
-      "required": true
-    },
-    "Semester": {
       "type": "string"
     },
-    "Type_of_Competition": {
+    "semester": {
       "type": "string"
     },
-    "Organized_By": {
+    "type_of_competition": {
       "type": "string"
     },
-    "Organized_During": {
+    "orgranized_by": {
       "type": "string"
     },
-    "Level": {
+    "organized_during": {
       "type": "string"
     },
-    "Awards": {
+    "level": {
+      "type": "string"
+    },
+    "awards": {
       "type": "string"
     }
   }

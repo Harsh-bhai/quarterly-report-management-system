@@ -67,15 +67,3 @@ export default {
     return Promise.resolve(importedTrads);
   },
 };
-
-// ("http://localhost:1337/content-manager/collection-types/plugin::users-permissions.user?page=1&pageSize=10&sort=username:ASC&filters[$and][0][id][$eq]=1&filters[$and][1][id][$ne]=2&filters[$and][2][username][$eq]=batman"
-
-// http://localhost:8000/admin/content-manager/collectionType/plugin::users-permissions.user?page=1&pageSize=10&sort=username:ASC
-
-// http://localhost:1337/content-manager/collection-types/plugin::users-permissions.user?page=1&pageSize=10&sort=username:ASC
-
-// changes : collectionType to collection-types
-// remove admin
-
-//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk1ODMwNzU0LCJleHAiOjE2OTg0MjI3NTR9.neOlJg9WCnvkYt4rckP_AFVkgROglLNUZyg78eetnFQ
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk1ODMwOTk0LCJleHAiOjE2OTg0MjI5OTR9.WbnGRDF46HXwC66h35yjoH4aHEc76HFSx7V8vMTNiWE
