@@ -12,7 +12,8 @@ import {
   BaseHeaderLayout,
   Alert,
   GridLayout,
-  NumberInput,
+  Typography,
+  Status,
 } from "@strapi/design-system";
 import { Plus } from "@strapi/icons";
 
@@ -26,8 +27,10 @@ const HomePage = () => {
   const [tableOptions, setTableOptions] = useState([]);
   const [currentObject, setCurrentObject] = useState({});
   const [content, setContent] = useState("");
+  const [resData, setResData] = useState([])
   let filteredData;
   let currString;
+  // let resData=[];
   useEffect(() => {
     fetchDetails();
   }, []);
@@ -49,14 +52,18 @@ const HomePage = () => {
         setOperation('');
         setContent('');
       }
-      console.log(query, "query")
+      console.log(currentObject, "cobject")
   }
+  const removeItem = (itemToRemove) => {
+    const updatedQuery = query.filter(item => item !== itemToRemove);
+    setQuery(updatedQuery);
+  };
 
   const fetchDetails = async () => {
     try {
       const token = sessionStorage.getItem("jwtToken");
       const response = await fetch(
-        `http://localhost:1337/content-type-builder/content-types`,
+        `${process.env.STRAPI_ADMIN_BHOST}/content-type-builder/content-types`,
         {
           method: "GET",
           headers: {
@@ -90,19 +97,6 @@ const HomePage = () => {
     }
   };
 
-  // const tableOptions = [
-  //   { name: 'Table 1', value: 'table1' },
-  //   { name: 'Table 2', value: 'table2' },
-  //   { name: 'Table 3', value: 'table3' },
-  //   // Add more table options as needed
-  // ];
-  // const colOptions = [
-  //   { name: 'name', value: 'name' },
-  //   { name: 'award', value: 'award' },
-  //   { name: 'snip', value: 'snip' },
-  //   // Add more table options as needed
-  // ];
-
   const operationOptions = {
     $eq: "Equal",
     $eqi: "Equal (case-insensitive)",
@@ -130,9 +124,22 @@ const HomePage = () => {
     $not: "NOT",
   };
 
-  const onCreateOption = (optionName, optionValue) => {
-    // Handle creating custom options if needed
+  const FetchFilterDetails = async() => {
+    const key = Object.keys(operationOptions).find((k) => operationOptions[k] === operation);
+    let data=await fetch(`${process.env.STRAPI_ADMIN_BHOST}/api/${currentObject.apiID}s?publicationState=preview&filters[${col}][${key}]=${content}`,{
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${process.env.STRAPI_ADMIN_READ_ONLY_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+    })
+    let response=await data.json()
+    console.log(response.data,"data.response")
+    setResData(...resData,response.data)
+    console.log(resData,"resdata")
+    
   };
+ 
 
   const handleTableNameChange = (selectedTableName) => {
     console.log(tableOptions, "selectedTableName");
@@ -149,6 +156,7 @@ const HomePage = () => {
 
   return (
     <>
+    {/* header */}
       <Box
         background="neutral100"
         style={{ padding: "0.5em", marginTop: "2rem" }}
@@ -156,7 +164,7 @@ const HomePage = () => {
         <BaseHeaderLayout
           primaryAction={<Button startIcon={<Plus />}>Add an entry</Button>}
           title="Operations"
-          subtitle="36 entries found"
+          // subtitle="36 entries found"
           as="h2"
         />
       </Box>
@@ -168,11 +176,15 @@ const HomePage = () => {
           display: "flex",
         }}
       >
-        <h1>Filters Added</h1>
+         {query.length>0 && <Status variant="secondary" showBullet={false}>
+        <Typography>
+          <Typography fontWeight="bold">Filters Applied</Typography>
+        </Typography>
+      </Status>}
         <GridLayout gap={5}>
           {query.map((i) => (
               <GridItem key={i} background="warning200" col={1}>
-                <Alert key={i} closeLabel="Close" variant="success">
+                <Alert key={i} closeLabel="Close" onClick={()=>removeItem(i)} variant="success">
                   <span style={{ display: "flex" }}>
                     {i}
                   </span>
@@ -183,7 +195,7 @@ const HomePage = () => {
         <Box padding={14}>
           <Divider />
         </Box>
-        ,{/* select table here */}
+        {/* select table here */}
         <SingleSelect
           label="Select Table "
           placeholder="Select table..."
@@ -255,7 +267,7 @@ const HomePage = () => {
             display: "flex",
             justifyContent: "center",
           }}
-          onClick={queryAdd}
+          onClick={()=>{queryAdd();FetchFilterDetails()}}
         >
           Add Filter
         </Button>

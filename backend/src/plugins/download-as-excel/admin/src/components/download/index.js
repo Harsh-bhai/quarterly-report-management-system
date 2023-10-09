@@ -85,23 +85,3 @@ const DownloadButton = () => {
 };
 
 export default DownloadButton;
-
-// fetch("http://localhost:1337/content-manager/collection-types/plugin::users-permissions.user?page=1&pageSize=10&sort=username:ASC", {
-//   "headers": {
-//     "accept": "*/*",
-//     "accept-language": "en-US,en;q=0.9",
-//     "authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiaWF0IjoxNjk1ODI4NTc2LCJleHAiOjE2OTg0MjA1NzZ9.e8TXy9h_2-1cVGBAC1j5kfn6WCzTXhSg0nS1kBH32Jg",
-//     "sec-ch-ua": "\"Google Chrome\";v=\"117\", \"Not;A=Brand\";v=\"8\", \"Chromium\";v=\"117\"",
-//     "sec-ch-ua-mobile": "?0",
-//     "sec-ch-ua-platform": "\"Windows\"",
-//     "sec-fetch-dest": "empty",
-//     "sec-fetch-mode": "cors",
-//     "sec-fetch-site": "same-site"
-//   },
-//   "referrer": "http://localhost:8000/",
-//   "referrerPolicy": "strict-origin-when-cross-origin",
-//   "body": null,
-//   "method": "GET",
-//   "mode": "cors",
-//   "credentials": "include"
-// });
