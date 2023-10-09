@@ -17,6 +17,7 @@ import {
 import { Plus } from "@strapi/icons";
 
 const HomePage = () => {
+  const [query, setQuery] = useState([]);
   const [tableName, setTableName] = useState();
   // const [filteredData, setFilteredData] = useState([])
   const [operation, setOperation] = useState("");
@@ -26,10 +27,30 @@ const HomePage = () => {
   const [currentObject, setCurrentObject] = useState({});
   const [content, setContent] = useState("");
   let filteredData;
-
+  let currString;
   useEffect(() => {
     fetchDetails();
   }, []);
+
+  const queryAdd= (  ) => {
+    const uniqueQuerySet = new Set(query);
+    if(col!=""  && operation!="" && content!=""){
+      currString=col+' '+operation+' '+ content
+        // Add the current string to the Set
+        uniqueQuerySet.add(currString);
+        
+            // Convert the Set back to an array
+          const uniqueQueryArray = Array.from(uniqueQuerySet);
+
+          setQuery(uniqueQueryArray); // Update query using the unique array
+
+        // Clear input fields
+        setcol('');
+        setOperation('');
+        setContent('');
+      }
+      console.log(query, "query")
+  }
 
   const fetchDetails = async () => {
     try {
@@ -149,13 +170,11 @@ const HomePage = () => {
       >
         <h1>Filters Added</h1>
         <GridLayout gap={5}>
-          {Array(3)
-            .fill(null)
-            .map((_, i) => (
+          {query.map((i) => (
               <GridItem key={i} background="warning200" col={1}>
                 <Alert key={i} closeLabel="Close" variant="success">
                   <span style={{ display: "flex" }}>
-                    This is the default variant.
+                    {i}
                   </span>
                 </Alert>
               </GridItem>
@@ -236,7 +255,7 @@ const HomePage = () => {
             display: "flex",
             justifyContent: "center",
           }}
-          onClick={() => console.log("Filter button clicked")}
+          onClick={queryAdd}
         >
           Add Filter
         </Button>

@@ -1,9 +1,98 @@
-import React from 'react'
+import React,{useState} from 'react'
 
-const onChange = () => {
+const One = () => {
+     const [form, setForm] = useState({
+          name: '',
+          articleName: '',
+          snip: '',
+          sjr: '',
+          hIndex: '',
+          impactFactor: '',
+          ISSN: '',
+          Publisher: '',
+          Month: '',
+          Year: '',
+          Volume: '',
+          Issue: '',
+          DOI: '',
+          pagenum: '',
+          Citation: '',
+          Indexed: '',
+        });
+
+        const handleInputChange = (e) => {
+          const { name, value } = e.target;
+          setForm({ ...form, [name]: value });
+        };
+
+        const handleSubmit =async(e) => {
+          e.preventDefault();
+          try {
+            const data = {
+              data: {
+               name: form.name,
+               articleName: form.articleName,
+               snip: form.snip,
+               sjr: form.sjr,
+               hIndex: form.hIndex,
+               impactFactor: form.impactFactor,
+               ISSN: form.ISSN,
+               Year: form.Year,
+               Issue: form.Issue,
+               pagenum: form.pagenum,
+               pagenum: form.pagenum,
+               Indexed: form.Indexed,
+              },
+            };
+            console.log(data);
+            let a = await fetch(`${process.env.BHOST}/api/firs`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(data),
+            });
+            toast.success("FIR added Successfully", {
+              position: "top-right",
+              autoClose: 1200,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              theme: "light",
+            });
+          } catch (error) {
+            toast.error(error, {
+              position: "top-right",
+              autoClose: 1200,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              theme: "light",
+            });
+          }
+              setForm({
+                firno: "",
+                date: "",
+                time: "",
+                criminalname: "",
+                criminalage: "",
+                criminalgender: "",
+                victimname: "",
+                victimage: "",
+                victimgender: "",
+                long: "",
+                lat: "",
+                pincode: "",
+                address: "",
+                type: "",
+                color: "",
+              });
+        };
   return (
     <div>
-        <form
+        <form onSubmit={handleSubmit}
     className="mr-4 backdrop-blur-xl shadow-md rounded-xl bg-white px-4 pt-6 pb-8 mb-4 flex flex-col my-2 w-11/12  mx-auto">
     <div className="text-md rounded-lg w-full text-center sm:text-2xl md:text-3xl font-medium bg-black py-1 text-white mb-2"
          id="formName" name=''>Published Research
@@ -13,7 +102,7 @@ const onChange = () => {
               htmlFor="name">
               Author <span className="text-[10px] font-thin">(student name)</span>
          </label>
-         <input required
+         <input required value={form.name} onChange={handleInputChange}
               className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
               id="name" name='name' type="text" placeholder="Jane"/>
     </div>
@@ -24,7 +113,7 @@ const onChange = () => {
                    htmlFor="articleName">
                    Title
               </label>
-              <input required
+              <input required value={form.articleName} onChange={handleInputChange}
                    className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                    id="articleName" name='articleName' type="text" placeholder="Human Rights"/>
          </div>
@@ -34,7 +123,7 @@ const onChange = () => {
                    htmlFor="journalName">
                    Journal
               </label>
-              <input required
+              <input required value={form.journalName} onChange={handleInputChange}
                    className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                    id="journalName" name='journalName' type="text" placeholder="Human Rights Abuse"/>
          </div>
@@ -47,7 +136,7 @@ const onChange = () => {
                         htmlFor="snip">
                         SNIP
                    </label>
-                   <input required
+                   <input required value={form.snip} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="snip" name='snip' type="text" placeholder="SNIP Value"/>
               </div>
@@ -57,7 +146,7 @@ const onChange = () => {
                         htmlFor="sjr">
                         SJR
                    </label>
-                   <input required
+                   <input required value={form.sjr} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="sjr" name='sjr' type="text" placeholder="SJR Value"/>
               </div>
@@ -69,7 +158,7 @@ const onChange = () => {
                         htmlFor="hIndex">
                         H Index
                    </label>
-                   <input required
+                   <input required value={form.hIndex} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="hIndex" name='hIndex' type="text" placeholder="H Index Value"/>
               </div>
@@ -79,7 +168,7 @@ const onChange = () => {
                         htmlFor="impactFactor">
                         Impact Factor
                    </label>
-                   <input required
+                   <input required value={form.impactFactor} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="impactFactor" name='impactFactor' type="text" placeholder="Impact Factor Value"/>
               </div>
@@ -93,7 +182,7 @@ const onChange = () => {
                         htmlFor="ISSN">
                         ISSN
                    </label>
-                   <input required
+                   <input required value={form.ISSN} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="ISSN" name='ISSN' type="text" placeholder="ISSN Value"/>
               </div>
@@ -103,7 +192,7 @@ const onChange = () => {
                         htmlFor="Publisher">
                         Publisher
                    </label>
-                   <input required
+                   <input required value={form.ISSN} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="Publisher" name='Publisher' type="text" placeholder="Publisher Value"/>
               </div>
@@ -115,7 +204,7 @@ const onChange = () => {
                         htmlFor="Month">
                         Month <span className="text-[10px] font-thin">(month of publish)</span>
                    </label>
-                   <input required
+                   <input required value={form.Month} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="Month" name='Month' type="text" placeholder="Month"/>
               </div>
@@ -125,7 +214,7 @@ const onChange = () => {
                         htmlFor="Year">
                         Year <span className="text-[10px] font-thin">(year of publish)</span>
                    </label>
-                   <input required
+                   <input required value={form.Year} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="Year" name='Year' type="text" placeholder="Year"/>
               </div>
@@ -139,7 +228,7 @@ const onChange = () => {
                         htmlFor="Volume">
                         Volume
                    </label>
-                   <input required
+                   <input required value={form.Volume} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="Volume" name='Volume' type="text" placeholder="Volume"/>
               </div>
@@ -149,7 +238,7 @@ const onChange = () => {
                         htmlFor="Issue">
                         Issue
                    </label>
-                   <input required
+                   <input required value={form.Issue} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="Issue" name='Issue' type="text" placeholder="Issue"/>
               </div>
@@ -161,7 +250,7 @@ const onChange = () => {
                         htmlFor="DOI">
                         DOI
                    </label>
-                   <input required
+                   <input required value={form.DOI} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="DOI" name='DOI' type="text" placeholder="https: ......"/>
               </div>
@@ -175,7 +264,7 @@ const onChange = () => {
                         htmlFor="pagenum">
                         Page Number
                    </label>
-                   <input required
+                   <input required value={form.pagenum} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="pagenum" name='pagenum' type="text"
                         placeholder="P.no(multiple page use '-' , eg.)"/>
@@ -186,7 +275,7 @@ const onChange = () => {
                         htmlFor="Citation">
                         Citation
                    </label>
-                   <input required
+                   <input required value={form.Citation} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="Citation" name='Citation' type="text" placeholder="Citation"/>
               </div>
@@ -196,7 +285,7 @@ const onChange = () => {
                         htmlFor="Indexed">
                         Indexed (SCI/SCOPUS/Other)
                    </label>
-                   <input required
+                   <input required value={form.Indexed} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="Indexed" name='Indexed' type="text" placeholder="Indexed"/>
               </div>
@@ -208,4 +297,4 @@ const onChange = () => {
   )
 }
 
-export default onChange
+export default One
