@@ -14,6 +14,13 @@ import {
   GridLayout,
   Typography,
   Status,
+  Table,
+  Thead,
+  Tr,
+  Th,
+  BaseCheckbox,
+  VisuallyHidden,
+  Tbody,
 } from "@strapi/design-system";
 import { Plus } from "@strapi/icons";
 
@@ -27,35 +34,40 @@ const HomePage = () => {
   const [tableOptions, setTableOptions] = useState([]);
   const [currentObject, setCurrentObject] = useState({});
   const [content, setContent] = useState("");
-  const [resData, setResData] = useState([])
+  const [resData, setResData] = useState([]);
+  const [final, setFinal] = useState([]);
+  const [primaryKey, setPrimaryKey] = useState()
   let filteredData;
   let currString;
+  const uniqueAttributes = [];
   // let resData=[];
   useEffect(() => {
     fetchDetails();
   }, []);
 
-  const queryAdd= (  ) => {
+  const queryAdd = () => {
     const uniqueQuerySet = new Set(query);
-    if(col!=""  && operation!="" && content!=""){
-      currString=col+' '+operation+' '+ content
-        // Add the current string to the Set
-        uniqueQuerySet.add(currString);
-        
-            // Convert the Set back to an array
-          const uniqueQueryArray = Array.from(uniqueQuerySet);
+    if (col != "" && operation != "" && content != "") {
+      currString = col + " " + operation + " " + content;
+      // Add the current string to the Set
+      uniqueQuerySet.add(currString);
 
-          setQuery(uniqueQueryArray); // Update query using the unique array
+      // Convert the Set back to an array
+      const uniqueQueryArray = Array.from(uniqueQuerySet);
 
-        // Clear input fields
-        setcol('');
-        setOperation('');
-        setContent('');
-      }
-      console.log(currentObject, "cobject")
-  }
+      setQuery(uniqueQueryArray); // Update query using the unique array
+
+      // Clear input fields
+      setcol("");
+      setOperation("");
+      setContent("");
+    }
+    console.log(currentObject, "cobject");
+  };
+
+  const regexPattern = /^(\S+)\s+(.*?)\s+(\S+)$/;
   const removeItem = (itemToRemove) => {
-    const updatedQuery = query.filter(item => item !== itemToRemove);
+    const updatedQuery = query.filter((item) => item !== itemToRemove);
     setQuery(updatedQuery);
   };
 
@@ -124,22 +136,66 @@ const HomePage = () => {
     $not: "NOT",
   };
 
-  const FetchFilterDetails = async() => {
-    const key = Object.keys(operationOptions).find((k) => operationOptions[k] === operation);
-    let data=await fetch(`${process.env.STRAPI_ADMIN_BHOST}/api/${currentObject.apiID}s?publicationState=preview&filters[${col}][${key}]=${content}`,{
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${process.env.STRAPI_ADMIN_READ_ONLY_TOKEN}`,
-        "Content-Type": "application/json",
-      },
-    })
-    let response=await data.json()
-    console.log(response.data,"data.response")
-    setResData(...resData,response.data)
-    console.log(resData,"resdata")
-    
+  const FetchFilterDetails = async () => {
+    const key = Object.keys(operationOptions).find(
+      (k) => operationOptions[k] === operation
+    );
+    let data = await fetch(
+      `${process.env.STRAPI_ADMIN_BHOST}/api/${currentObject.apiID}s?publicationState=preview&filters[${col}][${key}]=${content}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${process.env.STRAPI_ADMIN_READ_ONLY_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    let response = await data.json();
+    console.log([...response.data], "data.response");
+    setResData([...resData, ...response.data]);
+    console.log(resData, "resdata");
   };
- 
+
+  const findPrimaryKey= (  ) => {
+    const attributes = currentObject.schema.attributes;
+    let primary=Object.values(attributes).filter(([, attribute]) => {
+      return attribute.unique === true && attribute.required === true;
+    });
+    setPrimaryKey(primary[0][0])
+  }
+
+  const filterJson = () => {
+    
+    let match = currString.match(regexPattern);
+    let Currattribute = match[1];
+    let CurrOperator = match[2];
+    let CurrValue = match[3];
+    // filtered the values of same condition attribute
+    resData.forEach((item) => {
+      item.attributes[Currattribute] = CurrValue;
+      setFinal([...final, item]);
+      setFinal(Array.from(new Set(final)));
+    });
+
+    //FIXME - merge all attributes
+    // merge all attributes of same primary key
+    resData.forEach((item) => {
+      item.attributes[primaryKey] = CurrValue;
+      setFinal([...final, item]);
+      setFinal(Array.from(new Set(final)));
+    });
+
+    // finding all the unique attributes
+    final.forEach(item => {
+      const attributes = item.attributes;
+      Object.keys(attributes).forEach(attribute => {
+          if (!uniqueAttributes.includes(attribute)) {
+              uniqueAttributes.push(attribute);
+          }
+      });
+  });
+  
+  };
 
   const handleTableNameChange = (selectedTableName) => {
     console.log(tableOptions, "selectedTableName");
@@ -156,7 +212,7 @@ const HomePage = () => {
 
   return (
     <>
-    {/* header */}
+      {/* header */}
       <Box
         background="neutral100"
         style={{ padding: "0.5em", marginTop: "2rem" }}
@@ -176,21 +232,26 @@ const HomePage = () => {
           display: "flex",
         }}
       >
-         {query.length>0 && <Status variant="secondary" showBullet={false}>
-        <Typography>
-          <Typography fontWeight="bold">Filters Applied</Typography>
-        </Typography>
-      </Status>}
+        {query.length > 0 && (
+          <Status variant="secondary" showBullet={false}>
+            <Typography>
+              <Typography fontWeight="bold">Filters Applied</Typography>
+            </Typography>
+          </Status>
+        )}
         <GridLayout gap={5}>
           {query.map((i) => (
-              <GridItem key={i} background="warning200" col={1}>
-                <Alert key={i} closeLabel="Close" onClick={()=>removeItem(i)} variant="success">
-                  <span style={{ display: "flex" }}>
-                    {i}
-                  </span>
-                </Alert>
-              </GridItem>
-            ))}
+            <GridItem key={i} background="warning200" col={1}>
+              <Alert
+                key={i}
+                closeLabel="Close"
+                onClick={() => removeItem(i)}
+                variant="success"
+              >
+                <span style={{ display: "flex" }}>{i}</span>
+              </Alert>
+            </GridItem>
+          ))}
         </GridLayout>
         <Box padding={14}>
           <Divider />
@@ -237,8 +298,7 @@ const HomePage = () => {
               ))}
             </SingleSelect>
 
-            
-               <TextInput
+            <TextInput
               placeholder="Enter Value"
               label="Value"
               name="strValue"
@@ -253,9 +313,6 @@ const HomePage = () => {
               onValueChange={(value) => setContent(value)}
               value={content}
             />} */}
-        
-
-            
           </>
         )}
         <Button
@@ -267,11 +324,62 @@ const HomePage = () => {
             display: "flex",
             justifyContent: "center",
           }}
-          onClick={()=>{queryAdd();FetchFilterDetails()}}
+          onClick={() => {
+            queryAdd();
+            FetchFilterDetails();
+            filterJson();
+          }}
         >
           Add Filter
         </Button>
       </div>
+      {final.length>0 &&  <Box padding={8} background="neutral100">
+        <Table colCount={final.length} rowCount={uniqueAttributes.length}>
+          <Thead>
+            <Tr>
+              <Th>
+                <BaseCheckbox aria-label="Select all entries" />
+              </Th>
+              {uniqueAttributes.map((item)=>{
+                return <Th key={item}>{item}</Th>
+              })}
+              <Th>
+                <Typography variant="sigma">{item.toUpperCase()}</Typography>
+              </Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {final.map(entry => <Tr key={entry.id}>
+                <Td>
+                  <BaseCheckbox aria-label={`Select ${entry.contact}`} />
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">{entry.id}</Typography>
+                </Td>
+                <Td>
+                  <Avatar src={entry.cover} alt={entry.contact} />
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">{entry.description}</Typography>
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">{entry.category}</Typography>
+                </Td>
+                <Td>
+                  <Typography textColor="neutral800">{entry.contact}</Typography>
+                </Td>
+                <Td>
+                  <Flex>
+                    <IconButton onClick={() => console.log('edit')} label="Edit" noBorder icon={<Pencil />} />
+                    <Box paddingLeft={1}>
+                      <IconButton onClick={() => console.log('delete')} label="Delete" noBorder icon={<Trash />} />
+                    </Box>
+                  </Flex>
+                </Td>
+              </Tr>)}
+          </Tbody>
+        </Table>
+      </Box>}
     </>
   );
 };

@@ -14,7 +14,8 @@
   "attributes": {
     "student_name": {
       "type": "string",
-      "required": true
+      "required": true,
+      "unique": true
     },
     "branch": {
       "type": "string"
