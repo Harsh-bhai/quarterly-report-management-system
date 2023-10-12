@@ -39,6 +39,7 @@ const HomePage = () => {
   const [primaryKey, setPrimaryKey] = useState()
   let filteredData;
   let currString;
+  const tempData=[];
   const uniqueAttributes = [];
   // let resData=[];
   useEffect(() => {
@@ -63,6 +64,7 @@ const HomePage = () => {
       setContent("");
     }
     console.log(currentObject, "cobject");
+    findPrimaryKey();
   };
 
   const regexPattern = /^(\S+)\s+(.*?)\s+(\S+)$/;
@@ -153,12 +155,20 @@ const HomePage = () => {
     let response = await data.json();
     console.log([...response.data], "data.response");
     setResData([...resData, ...response.data]);
+    
     console.log(resData, "resdata");
   };
 
-  const findPrimaryKey= (  ) => {
+  const setPriymaryKeyInObject= () => {
+    resData.forEach((item) => {
+      console.log(item,"item")
+      item.primaryKey=primaryKey;
+    })
+  }
+
+  const findPrimaryKey= ( ) => {
     const attributes = currentObject.schema.attributes;
-    let primary=Object.values(attributes).filter(([, attribute]) => {
+    let primary=Object.entries(attributes).filter(([, attribute]) => {
       return attribute.unique === true && attribute.required === true;
     });
     setPrimaryKey(primary[0][0])
@@ -171,21 +181,22 @@ const HomePage = () => {
     let CurrOperator = match[2];
     let CurrValue = match[3];
     // filtered the values of same condition attribute
+    setFinal(resData);
     resData.forEach((item) => {
-      item.attributes[Currattribute] = CurrValue;
-      setFinal([...final, item]);
-      setFinal(Array.from(new Set(final)));
+      if(item.attributes[Currattribute] == CurrValue){
+        // item.attributes[Currattribute] = CurrValue;
+        setFinal([...final, item]);    // final filtered data
+        setFinal(Array.from(new Set(final)));
+      }
+      
     });
 
     //FIXME - merge all attributes
     // merge all attributes of same primary key
-    resData.forEach((item) => {
-      item.attributes[primaryKey] = CurrValue;
-      setFinal([...final, item]);
-      setFinal(Array.from(new Set(final)));
-    });
+    
+  
 
-    // finding all the unique attributes
+    // finding all the unique attributes and storing them to an array
     final.forEach(item => {
       const attributes = item.attributes;
       Object.keys(attributes).forEach(attribute => {
@@ -194,6 +205,7 @@ const HomePage = () => {
           }
       });
   });
+  console.log(final,"final")
   
   };
 
@@ -207,7 +219,12 @@ const HomePage = () => {
     );
 
     // setCurrentObject(selectedObject);
-    console.log(currentObject, "currentObject");
+    // if(Object.keys(currentObject).length > 0){
+    //   findPrimaryKey()
+    // }
+    // console.log(currentObject, "currentObject");
+      
+    // console.log(primaryKey, "pkey");
   };
 
   return (
@@ -327,13 +344,14 @@ const HomePage = () => {
           onClick={() => {
             queryAdd();
             FetchFilterDetails();
+            setPriymaryKeyInObject();
             filterJson();
           }}
         >
           Add Filter
         </Button>
       </div>
-      {final.length>0 &&  <Box padding={8} background="neutral100">
+      {/* {final.length>0 &&  <Box padding={8} background="neutral100">
         <Table colCount={final.length} rowCount={uniqueAttributes.length}>
           <Thead>
             <Tr>
@@ -344,7 +362,7 @@ const HomePage = () => {
                 return <Th key={item}>{item}</Th>
               })}
               <Th>
-                <Typography variant="sigma">{item.toUpperCase()}</Typography>
+                <Typography variant="sigma"></Typography>
               </Th>
             </Tr>
           </Thead>
@@ -379,7 +397,7 @@ const HomePage = () => {
               </Tr>)}
           </Tbody>
         </Table>
-      </Box>}
+      </Box>} */}
     </>
   );
 };

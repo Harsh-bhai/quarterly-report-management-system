@@ -1,9 +1,13 @@
+import Cookies from 'js-cookie';
 import React,{useState} from 'react'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
-const One = () => {
+const One = ({quarter}) => {
      const [form, setForm] = useState({
           name: '',
           articleName: '',
+          journalName: '',
           snip: '',
           sjr: '',
           hIndex: '',
@@ -18,41 +22,53 @@ const One = () => {
           pagenum: '',
           Citation: '',
           Indexed: '',
+          quarter:'',
         });
 
         const handleInputChange = (e) => {
-          const { name, value } = e.target;
-          setForm({ ...form, [name]: value });
+          // const { name, value } = e.target;
+          setForm({ ...form, [e.target.name]: e.target.value });
         };
 
         const handleSubmit =async(e) => {
           e.preventDefault();
+          let token=Cookies.get("jwtoken")
           try {
             const data = {
               data: {
-               name: form.name,
-               articleName: form.articleName,
-               snip: form.snip,
-               sjr: form.sjr,
-               hIndex: form.hIndex,
-               impactFactor: form.impactFactor,
+               Authors: form.name,
+               Title: form.articleName,
+               Journal: form.journalName,
+               SNIP: form.snip,
+               SJR: form.sjr,
+               H_Index: form.hIndex,
+               Impact_Factor: form.impactFactor,
                ISSN: form.ISSN,
                Year: form.Year,
                Issue: form.Issue,
-               pagenum: form.pagenum,
-               pagenum: form.pagenum,
+               Page_No: form.pagenum,
                Indexed: form.Indexed,
+               Quarter:quarter,
+               Citation: form.Citation,
+               DOI: form.DOI,
+               Month: form.Month,
+               Publisher: form.Publisher,
+               Vol: form.Vol,
               },
             };
-            console.log(data);
-            let a = await fetch(`${process.env.BHOST}/api/firs`, {
+            let a = await fetch(`${process.env.NEXT_PUBLIC_BHOST}/api/details-of-the-published-research-articles-in-journals`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`,
               },
               body: JSON.stringify(data),
             });
-            toast.success("FIR added Successfully", {
+            let response=await a.json()
+            console.log(response,"response");
+            console.log(data,"data");
+            console.log("form",form)
+            toast.success("Form Submiteed Successfully", {
               position: "top-right",
               autoClose: 1200,
               hideProgressBar: false,
@@ -72,23 +88,26 @@ const One = () => {
               theme: "light",
             });
           }
-              setForm({
-                firno: "",
-                date: "",
-                time: "",
-                criminalname: "",
-                criminalage: "",
-                criminalgender: "",
-                victimname: "",
-                victimage: "",
-                victimgender: "",
-                long: "",
-                lat: "",
-                pincode: "",
-                address: "",
-                type: "",
-                color: "",
-              });
+          //     setForm({
+          //      name: '',
+          //      articleName: '',
+          //      journalName: '',
+          //      snip: '',
+          //      sjr: '',
+          //      hIndex: '',
+          //      impactFactor: '',
+          //      ISSN: '',
+          //      Publisher: '',
+          //      Month: '',
+          //      Year: '',
+          //      Volume: '',
+          //      Issue: '',
+          //      DOI: '',
+          //      pagenum: '',
+          //      Citation: '',
+          //      Indexed: '',
+          //      quarter:'',
+          //    });
         };
   return (
     <div>
@@ -192,7 +211,7 @@ const One = () => {
                         htmlFor="Publisher">
                         Publisher
                    </label>
-                   <input required value={form.ISSN} onChange={handleInputChange}
+                   <input required value={form.Publisher} onChange={handleInputChange}
                         className="appearance-none block w-full bg-grey-lighter text-grey-darker border border-red rounded py-1 md:py-3 px-4 mb-3"
                         id="Publisher" name='Publisher' type="text" placeholder="Publisher Value"/>
               </div>

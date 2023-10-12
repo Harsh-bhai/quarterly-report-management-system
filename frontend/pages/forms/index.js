@@ -335,65 +335,65 @@ const Forms = () => {
                 // console.log(typeof selectedvalue,"here")
         switch (selectedvalue) {
           case '1':
-            return <One />;
+            return <One quarter={quarter} />;
           case '2':
-            return <Two />;
+            return <Two quarter={quarter} />;
           case '3':
-            return <Three />;
+            return <Three quarter={quarter} />;
           case '4':
-            return <Four />;
+            return <Four quarter={quarter} />;
           case '5':
-            return <Five />;
+            return <Five quarter={quarter} />;
           case '6':
-            return <Six />;
+            return <Six quarter={quarter} />;
           case '7':
-            return <Seven />;
+            return <Seven quarter={quarter} />;
           case '8':
-            return <Eight />;
+            return <Eight quarter={quarter} />;
           case '9':
-            return <Nine />;
+            return <Nine quarter={quarter} />;
           case '10':
-            return <Ten />;
+            return <Ten quarter={quarter} />;
           case '11':
-            return <Eleven />;
+            return <Eleven quarter={quarter} />;
           case '12':
-            return <Twelve />;
+            return <Twelve quarter={quarter} />;
           case '13':
-            return <Thirteen />;
+            return <Thirteen quarter={quarter} />;
           case '14':
-            return <Fourteen />;
+            return <Fourteen quarter={quarter} />;
           case '15':
-            return <Fifteen />;
+            return <Fifteen quarter={quarter} />;
           case '16':
-            return <Sixteen />;
+            return <Sixteen quarter={quarter} />;
           case '17':
-            return <Seventeen />;
+            return <Seventeen quarter={quarter} />;
           case '18':
-            return <Eighteen />;
+            return <Eighteen quarter={quarter} />;
           case '19':
-            return <Nineteen />;
+            return <Nineteen quarter={quarter} />;
           case '20':
-            return <Twenty />;
+            return <Twenty quarter={quarter} />;
           case '21':
-            return <TwentyOne />;
+            return <TwentyOne quarter={quarter} />;
           case '22':
-            return <TwentyTwo />;
+            return <TwentyTwo quarter={quarter} />;
           case '23':
-            return <TwentyThree />;
+            return <TwentyThree quarter={quarter} />;
           case '24':
-            return <TwentyFour />;
+            return <TwentyFour quarter={quarter} />;
           case '25':
-            return <TwentyFive />;
+            return <TwentyFive quarter={quarter} />;
           case '26':
-            return <TwentySix />;
+            return <TwentySix quarter={quarter} />;
           case '27':
-            return <TwentySeven />;
+            return <TwentySeven quarter={quarter} />;
           case '28':
-            return <TwentyEight />;
+            return <TwentyEight quarter={quarter} />;
           case '29':
-            return <TwentyNine />;
+            return <TwentyNine quarter={quarter} />;
           case '30':
-            return <Thirty />;
+            return <Thirty quarter={quarter} />;
           
           default:
             return <p className="text-2xl font-semibold text-center">Select a Form to fill details</p>;
