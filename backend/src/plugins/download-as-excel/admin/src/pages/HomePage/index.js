@@ -1,5 +1,6 @@
 // @ts-nocheck
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import html2pdf from "html2pdf.js";
 import {
   SingleSelectOption,
   SingleSelect,
@@ -17,14 +18,19 @@ import {
   Table,
   Thead,
   Tr,
+  Td,
+  Flex,
   Th,
   BaseCheckbox,
   VisuallyHidden,
   Tbody,
+  IconButton,
 } from "@strapi/design-system";
-import { Plus } from "@strapi/icons";
+import { Pencil, Plus, Trash } from "@strapi/icons";
 
 const HomePage = () => {
+  const tableRef = useRef(null);
+
   const [query, setQuery] = useState([]);
   const [tableName, setTableName] = useState();
   // const [filteredData, setFilteredData] = useState([])
@@ -36,36 +42,76 @@ const HomePage = () => {
   const [content, setContent] = useState("");
   const [resData, setResData] = useState([]);
   const [final, setFinal] = useState([]);
-  const [primaryKey, setPrimaryKey] = useState()
-  let filteredData;
+  const [reloadkey, setReloadkey] = useState(1)
+  // const [primaryKey, setPrimaryKey] = useState();
+  const [superFinal, setSuperFinal] = useState([]);
+  const [uniqueAttributes, setUniqueAttributes] = useState([]); // store all unique attributes
+
+  let filteredData, primaryKey;
+  let temp = [];
   let currString;
-  const tempData=[];
-  const uniqueAttributes = [];
+  const groupedObjects = {}; // merged objects by primary key
+
+  const operationOptions = {
+    $eq: "Equal",
+    $eqi: "Equal (case-insensitive)",
+    $ne: "Not equal",
+    $nei: "Not equal (case-insensitive)",
+    $lt: "Less than",
+    $lte: "Less than or equal to",
+    $gt: "Greater than",
+    $gte: "Greater than or equal to",
+    $in: "Includes",
+    $notIn: "Not includes",
+    $contains: "Contains",
+    $notContains: "Does not contain",
+    $containsi: "Contains (case-insensitive)",
+    $notContainsi: "Does not contain (case-insensitive)",
+    $null: "Is null",
+    $notNull: "Is not null",
+    $between: "Is between",
+    $startsWith: "Starts with",
+    $startsWithi: "Starts with (case-insensitive)",
+    $endsWith: "Ends with",
+    $endsWithi: "Ends with (case-insensitive)",
+    $or: "OR",
+    $and: "AND",
+    $not: "NOT",
+  };
   // let resData=[];
   useEffect(() => {
     fetchDetails();
   }, []);
+  const finall = [
+    { id: 1, contact: "a", description: "desc", category: "cat" },
+  ];
 
-  const queryAdd = () => {
+  const queryAdd = async () => {
+    console.log("Queryadd is running");
+  
     const uniqueQuerySet = new Set(query);
-    if (col != "" && operation != "" && content != "") {
+  
+    if (col !== "" && operation !== "" && content !== "") {
       currString = col + " " + operation + " " + content;
-      // Add the current string to the Set
       uniqueQuerySet.add(currString);
-
-      // Convert the Set back to an array
+  
       const uniqueQueryArray = Array.from(uniqueQuerySet);
-
-      setQuery(uniqueQueryArray); // Update query using the unique array
-
+      setQuery(uniqueQueryArray);
+  
       // Clear input fields
       setcol("");
       setOperation("");
       setContent("");
     }
+  
     console.log(currentObject, "cobject");
-    findPrimaryKey();
+  
+    // Note: Use .then() instead of await to handle the asynchronous nature
+    findPrimaryKey().then((primaryKeyValue) => {
+      primaryKey=primaryKeyValue;
+      });
   };
+  
 
   const regexPattern = /^(\S+)\s+(.*?)\s+(\S+)$/;
   const removeItem = (itemToRemove) => {
@@ -75,7 +121,8 @@ const HomePage = () => {
 
   const fetchDetails = async () => {
     try {
-      const token = sessionStorage.getItem("jwtToken");
+      const token =
+        sessionStorage.getItem("jwtToken") || localStorage.getItem("jwtToken");
       const response = await fetch(
         `${process.env.STRAPI_ADMIN_BHOST}/content-type-builder/content-types`,
         {
@@ -111,34 +158,10 @@ const HomePage = () => {
     }
   };
 
-  const operationOptions = {
-    $eq: "Equal",
-    $eqi: "Equal (case-insensitive)",
-    $ne: "Not equal",
-    $nei: "Not equal (case-insensitive)",
-    $lt: "Less than",
-    $lte: "Less than or equal to",
-    $gt: "Greater than",
-    $gte: "Greater than or equal to",
-    $in: "Includes",
-    $notIn: "Not includes",
-    $contains: "Contains",
-    $notContains: "Does not contain",
-    $containsi: "Contains (case-insensitive)",
-    $notContainsi: "Does not contain (case-insensitive)",
-    $null: "Is null",
-    $notNull: "Is not null",
-    $between: "Is between",
-    $startsWith: "Starts with",
-    $startsWithi: "Starts with (case-insensitive)",
-    $endsWith: "Ends with",
-    $endsWithi: "Ends with (case-insensitive)",
-    $or: "OR",
-    $and: "AND",
-    $not: "NOT",
-  };
+
 
   const FetchFilterDetails = async () => {
+  console.log("fetchfilterdetails running")
     const key = Object.keys(operationOptions).find(
       (k) => operationOptions[k] === operation
     );
@@ -152,61 +175,148 @@ const HomePage = () => {
         },
       }
     );
-    let response = await data.json();
+    await new Promise(async(resolve, reject) => {
+      let response = await data.json();
     console.log([...response.data], "data.response");
-    setResData([...resData, ...response.data]);
-    
+    // if(resData.length == 0){
+    //   setResData([...response.data]);
+    // }else
+    //   setResData([...resData, ...response.data]);
+    resData.push(response.data[0]);
+    await setPriymaryKeyInObject();
+    resolve();
+    })
+    // setResData(Array.from(new Set(resData)));
     console.log(resData, "resdata");
   };
 
-  const setPriymaryKeyInObject= () => {
+  const setPriymaryKeyInObject = async() => {
+    console.log("setPriymaryKeyInObject running")
+  await new Promise((resolve, reject) => {
     resData.forEach((item) => {
-      console.log(item,"item")
-      item.primaryKey=primaryKey;
-    })
-  }
-
-  const findPrimaryKey= ( ) => {
-    const attributes = currentObject.schema.attributes;
-    let primary=Object.entries(attributes).filter(([, attribute]) => {
-      return attribute.unique === true && attribute.required === true;
+      console.log(item, "item");
+      item.primaryKey = primaryKey;
     });
-    setPrimaryKey(primary[0][0])
-  }
+    setFinal(resData)
+    resolve();
+  })
+  console.log("setPriymaryKeyInObject completed");
+  };
 
-  const filterJson = () => {
-    
-    let match = currString.match(regexPattern);
-    let Currattribute = match[1];
-    let CurrOperator = match[2];
-    let CurrValue = match[3];
-    // filtered the values of same condition attribute
-    setFinal(resData);
-    resData.forEach((item) => {
-      if(item.attributes[Currattribute] == CurrValue){
-        // item.attributes[Currattribute] = CurrValue;
-        setFinal([...final, item]);    // final filtered data
-        setFinal(Array.from(new Set(final)));
-      }
-      
-    });
-
-    //FIXME - merge all attributes
-    // merge all attributes of same primary key
-    
-  
-
-    // finding all the unique attributes and storing them to an array
-    final.forEach(item => {
-      const attributes = item.attributes;
-      Object.keys(attributes).forEach(attribute => {
-          if (!uniqueAttributes.includes(attribute)) {
-              uniqueAttributes.push(attribute);
-          }
+  const findPrimaryKey = () => {
+    return new Promise((resolve, reject) => {
+      const attributes = currentObject.schema.attributes;
+      let primary = Object.entries(attributes).filter(([, attribute]) => {
+        return attribute.unique === true && attribute.required === true;
       });
-  });
-  console.log(final,"final")
   
+      if (primary.length > 0) {
+        console.log("primary.length > 0")
+        // setPrimaryKey(primary[0][0]);
+        resolve(primary[0][0]);
+      } else {
+        reject(new Error("Primary key not found"));
+      }
+    });
+  };
+  
+
+  const filterJson = async () => {
+    console.log("filterJson running");
+    try {
+      let match = currString.match(regexPattern);
+      let Currattribute = match[1];
+      let CurrOperator = match[2];
+      let CurrValue = match[3];
+  
+      // Promise 1
+      // filtered the attributes based on the new query
+      // changing resData to final
+      await new Promise((resolve) => {
+        final.forEach((item) => {
+          console.log(item, "promise 1 item");
+          if (item.attributes[Currattribute] == CurrValue) {
+            console.log("something");
+            setFinal([...final, item]);
+            setFinal(Array.from(new Set(final)));
+          }
+        });
+        resolve();
+        console.log(final, "final");
+      });
+  
+      // Promise 2
+      // finding all the unique attributes and storing them to an array
+      await new Promise((resolve) => {
+        final.forEach((item) => {
+          const attributes = item.attributes;
+          
+          Object.keys(attributes).forEach((attribute) => {
+            if (!temp.includes(attribute)) {
+              temp.push(attribute);
+            }
+
+             // function to find the index of the primarykey and swap it with 0 index
+  
+            const primarykeyIndex = temp.indexOf(primaryKey);
+  
+            if (primarykeyIndex !== -1 && primarykeyIndex !== 0) {
+              temp.splice(primarykeyIndex, 1);
+              temp.splice(0, 0, primaryKey);
+            }
+  
+            temp = Array.from(new Set(temp));
+            setUniqueAttributes(temp);
+          });
+        });
+        resolve();
+        
+      });
+  
+      // Promise 3
+      // merging all the attributes of same primary key from final array
+      await new Promise((resolve) => {
+        // const groupedObjects = {};
+        final.forEach((item) => {
+          if (!groupedObjects[primaryKey]) {
+            groupedObjects[primaryKey] = { ...item.attributes };
+          } else {
+            groupedObjects[primaryKey] = {
+              ...groupedObjects[primaryKey],
+              ...item.attributes,
+            };
+          }
+        });
+        setSuperFinal([...superFinal, Object.entries(groupedObjects)]);
+        resolve();
+        console.log(superFinal, "superfinal");
+        console.log(uniqueAttributes, "all unique attributes");
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleConvertToPDF = () => {
+    const input = tableRef.current.querySelector('table');;
+    console.log(input,"tableinput")
+    if (input) {
+      const pdfOptions = {
+        margin: 10,
+        filename: "table.pdf",
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+      };
+
+      html2pdf()
+        .from(input)
+        .set(pdfOptions)
+        .outputPdf()
+        .then((pdf) => {
+          pdf.save();
+        });
+    }
   };
 
   const handleTableNameChange = (selectedTableName) => {
@@ -223,7 +333,7 @@ const HomePage = () => {
     //   findPrimaryKey()
     // }
     // console.log(currentObject, "currentObject");
-      
+
     // console.log(primaryKey, "pkey");
   };
 
@@ -235,7 +345,11 @@ const HomePage = () => {
         style={{ padding: "0.5em", marginTop: "2rem" }}
       >
         <BaseHeaderLayout
-          primaryAction={<Button startIcon={<Plus />}>Add an entry</Button>}
+          primaryAction={
+            <Button onClick={handleConvertToPDF} startIcon={<Plus />}>
+              Convert to PDF
+            </Button>
+          }
           title="Operations"
           // subtitle="36 entries found"
           as="h2"
@@ -341,65 +455,85 @@ const HomePage = () => {
             display: "flex",
             justifyContent: "center",
           }}
-          onClick={() => {
-            queryAdd();
-            FetchFilterDetails();
-            setPriymaryKeyInObject();
-            filterJson();
-          }}
+          onClick={async () => {
+            console.log("Button clicked");
+            await queryAdd();
+            console.log("queryAdd completed");
+
+            await FetchFilterDetails();
+            console.log("FetchFilterDetails completed");
+
+            await filterJson();
+            console.log("filterJson completed");
+            
+            uniqueAttributes.length>0?uniqueAttributes.forEach((item) => {
+              console.log(item,"uniqueaitem")
+            }):console.log("no unique attributes")
+        }}
+        
         >
           Add Filter
         </Button>
       </div>
-      {/* {final.length>0 &&  <Box padding={8} background="neutral100">
-        <Table colCount={final.length} rowCount={uniqueAttributes.length}>
-          <Thead>
-            <Tr>
-              <Th>
-                <BaseCheckbox aria-label="Select all entries" />
-              </Th>
-              {uniqueAttributes.map((item)=>{
-                return <Th key={item}>{item}</Th>
-              })}
-              <Th>
-                <Typography variant="sigma"></Typography>
-              </Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {final.map(entry => <Tr key={entry.id}>
-                <Td>
-                  <BaseCheckbox aria-label={`Select ${entry.contact}`} />
-                </Td>
-                <Td>
-                  <Typography textColor="neutral800">{entry.id}</Typography>
-                </Td>
-                <Td>
-                  <Avatar src={entry.cover} alt={entry.contact} />
-                </Td>
-                <Td>
-                  <Typography textColor="neutral800">{entry.description}</Typography>
-                </Td>
-                <Td>
-                  <Typography textColor="neutral800">{entry.category}</Typography>
-                </Td>
-                <Td>
-                  <Typography textColor="neutral800">{entry.contact}</Typography>
-                </Td>
-                <Td>
-                  <Flex>
-                    <IconButton onClick={() => console.log('edit')} label="Edit" noBorder icon={<Pencil />} />
-                    <Box paddingLeft={1}>
-                      <IconButton onClick={() => console.log('delete')} label="Delete" noBorder icon={<Trash />} />
-                    </Box>
-                  </Flex>
-                </Td>
-              </Tr>)}
-          </Tbody>
-        </Table>
-      </Box>} */}
+      <div key={reloadkey}>
+        <div>
+        </div>
+            <div>
+              <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>
+                {currString}
+              </h1>
+            </div>
+        {superFinal.length > 0 && (
+          <Box padding={8} background="neutral100">
+            <div ref={tableRef} style={{ overflowX: "auto" }}>
+              <Table 
+                colCount={uniqueAttributes.length}
+                rowCount={superFinal.length}
+              >
+                <Thead>
+                  <Tr>
+                    {uniqueAttributes.map((item) => {
+                      return <Th key={item}>{item}</Th>;
+                    })}
+                    <Th>
+                      <Typography variant="sigma"></Typography>
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {superFinal.map((item) => (
+                    <Tr>
+                       {/* key={item}> */}
+                      {uniqueAttributes.length>0 && uniqueAttributes.map((i) => (
+                        <Td>
+                           {/* key={i}> */}
+                          <Typography textColor="neutral800">
+                            {console.log(item[0], "item under td")}
+                            {item[0] && item[0][1] && item[0][1][i] ? item[0][1][i] : "---"}
+                          </Typography>
+                        </Td>
+                      ))}
+                    </Tr>
+                  ))}
+                </Tbody>
+              </Table>
+            </div>
+          </Box>
+        )}
+      </div>
     </>
   );
 };
 
 export default HomePage;
+
+{
+  /* <Td>
+<Flex>
+  <IconButton onClick={() => console.log('edit')} label="Edit" noBorder icon={<Pencil />} />
+  <Box paddingLeft={1}>
+    <IconButton onClick={() => console.log('delete')} label="Delete" noBorder icon={<Trash />} />
+  </Box>
+</Flex>
+</Td> */
+}

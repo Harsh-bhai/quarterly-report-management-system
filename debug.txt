@@ -1,0 +1,100 @@
+queryAdd();
+query // usestate,array which stores queries
+
+---------------------------------------
+aysnc FetchFilterDetails()
+key,string like "$eq key"
+data , fetching filtered data using api
+    let data = await fetch(
+      `${process.env.STRAPI_ADMIN_BHOST}/api/${currentObject.apiID}s?publicationState=preview&filters[${col}][${key}]=${content}`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${process.env.STRAPI_ADMIN_READ_ONLY_TOKEN}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    let response = await data.json();
+    resData, array of objects
+    resData.push(response.data[0]);
+    final,usestate array,it is created of update the states,otherwise only resData is needed for this task
+    setFinal(resData);
+
+
+filterJson()
+
+
+  const filterJson = () => {
+    console.log("currstring",currString);
+    try {
+      let match = currString.match(regexPattern);
+    let Currattribute = match[1];
+    let CurrOperator = match[2];
+    let CurrValue = match[3];
+    // promise 1
+    // filtered the attributes based on the new query
+      // changing resData to final
+    final.forEach((item) => {
+      console.log(item, "finalcrush item");
+      if (item.attributes[Currattribute] == CurrValue) {
+        console.log("final crush");
+        // item.attributes[Currattribute] = CurrValue;
+        setFinal([...final, item]); // final filtered data
+        setFinal(Array.from(new Set(final))); // single valued data
+      }
+    });
+    console.log(final, "final");
+
+//promise 2
+    //FIXME - merge all attributes
+    // merge all attributes of same primary key
+
+    // finding all the unique attributes and storing them to an array
+    final.forEach((item) => {
+      const attributes = item.attributes;
+      let temp = [];
+      Object.keys(attributes).forEach((attribute) => {
+        if (!temp.includes(attribute)) {
+          temp.push(attribute);
+        }
+
+        // function to find the index of the primarykey and swap it with 0 index
+
+        // Check if the primarykey is in the array
+        const primarykeyIndex = temp.indexOf(primaryKey);
+
+        if (primarykeyIndex !== -1 && primarykeyIndex !== 0) {
+          // Remove the primarykey from its current position
+          temp.splice(primarykeyIndex, 1);
+
+          // Insert the primarykey at the 0th position
+          temp.splice(0, 0, primaryKey);
+        }
+        temp = Array.from(new Set(temp));
+
+        setUniqueAttributes([...uniqueAttributes, ...temp]);
+        // setUniqueAttributes(Array.from(new Set(uniqueAttributes)));
+      });
+    });
+    console.log(uniqueAttributes, "all unique attributes");
+
+//promise 3
+    // merging all the attributes of same primary key from final array
+    final.forEach((item) => {
+      if (!groupedObjects[primaryKey]) {
+        groupedObjects[primaryKey] = { ...item.attributes };
+      } else {
+        // Merge the attributes of objects with the same primary key
+        groupedObjects[primaryKey] = {
+          ...groupedObjects[primaryKey],
+          ...item.attributes,
+        };
+      }
+    });
+    setSuperFinal(...superFinal, Object.entries(groupedObjects));
+    console.log(superFinal, "superfinal");
+    } catch (error) {
+      console.log(error)
+    }
+  };

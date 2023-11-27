@@ -11,9 +11,13 @@ import Cookies from 'js-cookie';
 import Link from 'next/link';
 const Navbar = ({logout}) => {
   const [isLogin, setIsLogin] = useState(false)
+  const [role, setRole] = useState(false)
   useEffect(() => {
     if (Cookies.get('jwtoken')) {
       setIsLogin(true)
+    }
+    if (Cookies.get('role')) {
+      setRole(true)
     }
   }, [])
   
@@ -44,6 +48,7 @@ const Navbar = ({logout}) => {
             <Link  href={"/studentlogin"}><div onClick={toggle} className='hover:text-gray-600 text-gray-700 cursor-pointer'>Login</div></Link>}
             <Link  href={"/forms"}><div onClick={toggle} className='hover:text-gray-600 text-gray-700 cursor-pointer'>forms</div></Link>
             <Link  href={"/update"}><div onClick={toggle} className= 'hover:text-gray-600 text-gray-700 cursor-pointer'>Update</div></Link>
+            {role && <Link  href={process.env.NEXT_PUBLIC_BHOST_ADMIN + "/admin"} target='_blank'><div onClick={toggle} className= 'hover:text-gray-600 text-gray-700 cursor-pointer'>Admin</div></Link>}
             {/* <Link  href={"/about"}><div onClick={toggle} className='hover:text-gray-600 text-gray-700 cursor-pointer'>Contact Us</div></Link> */}
           </div>
         </div>
