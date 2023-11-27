@@ -1,6 +1,9 @@
 // @ts-nocheck
 import React, { useState, useEffect, useRef } from "react";
-import html2pdf from "html2pdf.js";
+// import html2pdf from "html2pdf.js";
+import jsPDF from "jspdf";
+import 'jspdf-autotable';
+import * as XLSX from "xlsx";
 import {
   SingleSelectOption,
   SingleSelect,
@@ -27,7 +30,6 @@ import {
   IconButton,
 } from "@strapi/design-system";
 import { Pencil, Plus, Trash } from "@strapi/icons";
-
 const HomePage = () => {
   const tableRef = useRef(null);
 
@@ -41,15 +43,15 @@ const HomePage = () => {
   const [currentObject, setCurrentObject] = useState({});
   const [content, setContent] = useState("");
   const [resData, setResData] = useState([]);
-  const [final, setFinal] = useState([]);
-  const [reloadkey, setReloadkey] = useState(1)
+  const [final, setFinal] = useState([]);   
+  const [reloadkey, setReloadkey] = useState(1);
   // const [primaryKey, setPrimaryKey] = useState();
   const [superFinal, setSuperFinal] = useState([]);
   const [uniqueAttributes, setUniqueAttributes] = useState([]); // store all unique attributes
 
   let filteredData, primaryKey;
   let temp = [];
-  let currString;
+  let currString, querystring="";
   const groupedObjects = {}; // merged objects by primary key
 
   const operationOptions = {
@@ -88,30 +90,29 @@ const HomePage = () => {
 
   const queryAdd = async () => {
     console.log("Queryadd is running");
-  
+
     const uniqueQuerySet = new Set(query);
-  
+
     if (col !== "" && operation !== "" && content !== "") {
       currString = col + " " + operation + " " + content;
       uniqueQuerySet.add(currString);
-  
+
       const uniqueQueryArray = Array.from(uniqueQuerySet);
       setQuery(uniqueQueryArray);
-  
+
       // Clear input fields
       setcol("");
       setOperation("");
       setContent("");
     }
-  
+
     console.log(currentObject, "cobject");
-  
+
     // Note: Use .then() instead of await to handle the asynchronous nature
     findPrimaryKey().then((primaryKeyValue) => {
-      primaryKey=primaryKeyValue;
-      });
+      primaryKey = primaryKeyValue;
+    });
   };
-  
 
   const regexPattern = /^(\S+)\s+(.*?)\s+(\S+)$/;
   const removeItem = (itemToRemove) => {
@@ -158,10 +159,8 @@ const HomePage = () => {
     }
   };
 
-
-
   const FetchFilterDetails = async () => {
-  console.log("fetchfilterdetails running")
+    console.log("fetchfilterdetails running");
     const key = Object.keys(operationOptions).find(
       (k) => operationOptions[k] === operation
     );
@@ -175,32 +174,32 @@ const HomePage = () => {
         },
       }
     );
-    await new Promise(async(resolve, reject) => {
+    await new Promise(async (resolve, reject) => {
       let response = await data.json();
-    console.log([...response.data], "data.response");
-    // if(resData.length == 0){
-    //   setResData([...response.data]);
-    // }else
-    //   setResData([...resData, ...response.data]);
-    resData.push(response.data[0]);
-    await setPriymaryKeyInObject();
-    resolve();
-    })
+      console.log([...response.data], "data.response");
+      // if(resData.length == 0){
+      //   setResData([...response.data]);
+      // }else
+      //   setResData([...resData, ...response.data]);
+      resData.push(response.data[0]);
+      await setPriymaryKeyInObject();
+      resolve();
+    });
     // setResData(Array.from(new Set(resData)));
     console.log(resData, "resdata");
   };
 
-  const setPriymaryKeyInObject = async() => {
-    console.log("setPriymaryKeyInObject running")
-  await new Promise((resolve, reject) => {
-    resData.forEach((item) => {
-      console.log(item, "item");
-      item.primaryKey = primaryKey;
+  const setPriymaryKeyInObject = async () => {
+    console.log("setPriymaryKeyInObject running");
+    await new Promise((resolve, reject) => {
+      resData.forEach((item) => {
+        console.log(item, "item");
+        item.primaryKey = primaryKey;
+      });
+      setFinal(resData);
+      resolve();
     });
-    setFinal(resData)
-    resolve();
-  })
-  console.log("setPriymaryKeyInObject completed");
+    console.log("setPriymaryKeyInObject completed");
   };
 
   const findPrimaryKey = () => {
@@ -209,9 +208,9 @@ const HomePage = () => {
       let primary = Object.entries(attributes).filter(([, attribute]) => {
         return attribute.unique === true && attribute.required === true;
       });
-  
+
       if (primary.length > 0) {
-        console.log("primary.length > 0")
+        console.log("primary.length > 0");
         // setPrimaryKey(primary[0][0]);
         resolve(primary[0][0]);
       } else {
@@ -219,7 +218,29 @@ const HomePage = () => {
       }
     });
   };
+
+  function getQuarterNumber(date) {
+    const month = date.getMonth() + 1; // Adding 1 to make it one-based
   
+    if (month >= 1 && month <= 3) {
+      return 1;
+    } else if (month >= 4 && month <= 6) {
+      return 2;
+    } else if (month >= 7 && month <= 9) {
+      return 3;
+    } else {
+      return 4;
+    }
+  }
+  const currentDate = new Date(); // Use the desired date
+  let currentyear = currentDate.getFullYear();
+  const quarterNumber = getQuarterNumber(currentDate);
+  let months={
+    1 : "JAN-MAR",
+    2 : "APR-JUN",
+    3 : "JUL-SEPT",
+    4 : "OCT-DEC",
+  }
 
   const filterJson = async () => {
     console.log("filterJson running");
@@ -228,7 +249,7 @@ const HomePage = () => {
       let Currattribute = match[1];
       let CurrOperator = match[2];
       let CurrValue = match[3];
-  
+
       // Promise 1
       // filtered the attributes based on the new query
       // changing resData to final
@@ -244,35 +265,34 @@ const HomePage = () => {
         resolve();
         console.log(final, "final");
       });
-  
+
       // Promise 2
       // finding all the unique attributes and storing them to an array
       await new Promise((resolve) => {
         final.forEach((item) => {
           const attributes = item.attributes;
-          
+
           Object.keys(attributes).forEach((attribute) => {
             if (!temp.includes(attribute)) {
               temp.push(attribute);
             }
 
-             // function to find the index of the primarykey and swap it with 0 index
-  
+            // function to find the index of the primarykey and swap it with 0 index
+
             const primarykeyIndex = temp.indexOf(primaryKey);
-  
+
             if (primarykeyIndex !== -1 && primarykeyIndex !== 0) {
               temp.splice(primarykeyIndex, 1);
               temp.splice(0, 0, primaryKey);
             }
-  
+
             temp = Array.from(new Set(temp));
             setUniqueAttributes(temp);
           });
         });
         resolve();
-        
       });
-  
+
       // Promise 3
       // merging all the attributes of same primary key from final array
       await new Promise((resolve) => {
@@ -288,6 +308,7 @@ const HomePage = () => {
           }
         });
         setSuperFinal([...superFinal, Object.entries(groupedObjects)]);
+
         resolve();
         console.log(superFinal, "superfinal");
         console.log(uniqueAttributes, "all unique attributes");
@@ -295,29 +316,143 @@ const HomePage = () => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handleConvertToPDF = () => {
-    const input = tableRef.current.querySelector('table');;
-    console.log(input,"tableinput")
-    if (input) {
-      const pdfOptions = {
-        margin: 10,
-        filename: "table.pdf",
-        image: { type: "jpeg", quality: 0.98 },
-        html2canvas: { scale: 2 },
-        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-      };
-
-      html2pdf()
-        .from(input)
-        .set(pdfOptions)
-        .outputPdf()
-        .then((pdf) => {
-          pdf.save();
-        });
+    if (superFinal.includes([])) {
+      superFinal.filter((item) => item.length > 0);
+    }
+    if (superFinal > 0) {
+      setFinal(setSuperFinal);
     }
   };
+
+// Include jsPDF library in your HTML file before using this script
+// You can download it from https://github.com/eKoopmans/html2pdf
+
+const handleConvertToPDF = () => {
+  const input = tableRef.current;
+  console.log(input, "tableinput");
+
+  if (input) {
+    // Initialize jsPDF
+    const pdf = new jsPDF({
+      unit: "mm",
+      format: "a4",
+      orientation: "portrait",
+    });
+
+    // Set font size and style
+    pdf.setFontSize(4);
+    pdf.setFont("arial", "normal");
+  
+    // Get table data
+    const tableData = [];
+    const rows = input.rows;
+
+    // Extract column headers
+    const headerRow = rows[0];
+    const columns = Array.from(headerRow.cells).map((cell) => cell.textContent.trim());
+
+    // Extract table rows
+    for (let i = 1; i < rows.length; i++) {
+      const rowData = Array.from(rows[i].cells).map((cell) => cell.textContent.trim());
+      tableData.push(rowData);
+    }
+
+    // Add table to PDF using autoTable
+    pdf.autoTable({
+      head: [columns],
+      body: tableData,
+      startY: 20, // Adjust the starting Y position as needed
+    });
+
+    // Save or open the PDF
+    pdf.save("table.pdf");
+  }
+};
+
+
+
+
+const handleExportToExcel = () => {
+  const input = tableRef.current;
+
+  if (input) {
+    // Get table data
+    const tableData = [];
+    const rows = input.rows;
+
+    // Define multiple headings with different styles
+    const headings = [
+      ['BHILAI INSTITUTE OF TECHNOLOGY, DURG'],
+      ['DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING'],
+      ['QUARTERLY REPORT'],
+      [`SESSION: ${months[quarterNumber]} ${currentyear}`],
+      ['R&D ACTIVITIES OF FACULTY MEMBERS'],
+      [],
+      [`${query.join(" & ")}`],
+    ];
+
+    // Create a new workbook
+    const wb = XLSX.utils.book_new();
+
+    // Create a new worksheet
+    const ws = XLSX.utils.aoa_to_sheet([[]]);
+
+    // Set values and styles for headings
+    headings.forEach((heading, rowIndex) => {
+      heading.forEach((cellValue, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({ r: rowIndex, c: colIndex });
+        XLSX.utils.sheet_add_aoa(ws, [[cellValue]], { origin: cellRef });
+        setCellStyle(ws, cellRef, { font: { bold: true, size: 14 } });
+      });
+    });
+
+    // Extract column headers
+    const headerRow = rows[0];
+    const columns = Array.from(headerRow.cells).map((cell) => cell.textContent.trim());
+
+    // Set values for column headers
+    columns.forEach((column, colIndex) => {
+      const cellRef = XLSX.utils.encode_cell({ r: headings.length, c: colIndex });
+      XLSX.utils.sheet_add_aoa(ws, [[column]], { origin: cellRef });
+      setCellStyle(ws, cellRef, { font: { bold: true, size: 9 } });
+    });
+
+    // Extract table rows and set values
+    for (let i = 1; i < rows.length; i++) {
+      const rowData = Array.from(rows[i].cells).map((cell) => cell.textContent.trim());
+      rowData.forEach((cellValue, colIndex) => {
+        const cellRef = XLSX.utils.encode_cell({ r: i + headings.length, c: colIndex });
+        XLSX.utils.sheet_add_aoa(ws, [[cellValue]], { origin: cellRef });
+      });
+    }
+
+    // Add the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+
+    // Save the workbook as an Excel file
+    XLSX.writeFile(wb, `Quarterly Report_${months[quarterNumber].replace("-", "_")}_${currentyear}.xlsx`);
+  }
+};
+
+const setCellStyle = (ws, cellRef, style) => {
+  const range = XLSX.utils.decode_range(cellRef);
+  for (let R = range.s.r; R <= range.e.r; ++R) {
+    for (let C = range.s.c; C <= range.e.c; ++C) {
+      const cellAddress = { c: C, r: R };
+      const cell = ws[cellAddress];
+      if (!cell) continue;
+
+      // Apply style
+      if (!cell.s) cell.s = {};
+      if (style.font) {
+        if (!cell.s.font) cell.s.font = {};
+        Object.assign(cell.s.font, style.font);
+      }
+    }
+  }
+};
+
+
 
   const handleTableNameChange = (selectedTableName) => {
     console.log(tableOptions, "selectedTableName");
@@ -336,6 +471,9 @@ const HomePage = () => {
 
     // console.log(primaryKey, "pkey");
   };
+//   `<Button onClick={handleExportToExcel} startIcon={<Plus />}>
+//   Convert to PDF
+// </Button>`
 
   return (
     <>
@@ -345,16 +483,14 @@ const HomePage = () => {
         style={{ padding: "0.5em", marginTop: "2rem" }}
       >
         <BaseHeaderLayout
-          primaryAction={
-            <Button onClick={handleConvertToPDF} startIcon={<Plus />}>
-              Convert to PDF
-            </Button>
-          }
+      
           title="Operations"
           // subtitle="36 entries found"
           as="h2"
         />
       </Box>
+      <Button disabled={final.length>0?false:true} onClick={handleExportToExcel} style={{ marginLeft: "4rem" }} variant="default">Download Excel </Button>
+      
       <div
         style={{
           padding: "1rem 4rem",
@@ -363,6 +499,7 @@ const HomePage = () => {
           display: "flex",
         }}
       >
+        
         {query.length > 0 && (
           <Status variant="secondary" showBullet={false}>
             <Typography>
@@ -465,28 +602,26 @@ const HomePage = () => {
 
             await filterJson();
             console.log("filterJson completed");
-            
-            uniqueAttributes.length>0?uniqueAttributes.forEach((item) => {
-              console.log(item,"uniqueaitem")
-            }):console.log("no unique attributes")
-        }}
-        
+
+            uniqueAttributes.length > 0
+              ? uniqueAttributes.forEach((item) => {
+                  console.log(item, "uniqueaitem");
+                })
+              : console.log("no unique attributes");
+          }}
         >
           Add Filter
         </Button>
       </div>
       <div key={reloadkey}>
+        <div></div>
         <div>
+          <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>{currString}</h1>
         </div>
-            <div>
-              <h1 style={{ fontSize: "24px", fontWeight: "bold" }}>
-                {currString}
-              </h1>
-            </div>
         {superFinal.length > 0 && (
           <Box padding={8} background="neutral100">
-            <div ref={tableRef} style={{ overflowX: "auto" }}>
-              <Table 
+            <div style={{ overflowX: "auto", width: "100%" }}>
+              <Table
                 colCount={uniqueAttributes.length}
                 rowCount={superFinal.length}
               >
@@ -503,16 +638,19 @@ const HomePage = () => {
                 <Tbody>
                   {superFinal.map((item) => (
                     <Tr>
-                       {/* key={item}> */}
-                      {uniqueAttributes.length>0 && uniqueAttributes.map((i) => (
-                        <Td>
-                           {/* key={i}> */}
-                          <Typography textColor="neutral800">
-                            {console.log(item[0], "item under td")}
-                            {item[0] && item[0][1] && item[0][1][i] ? item[0][1][i] : "---"}
-                          </Typography>
-                        </Td>
-                      ))}
+                      {/* key={item}> */}
+                      {uniqueAttributes.length > 0 &&
+                        uniqueAttributes.map((i) => (
+                          <Td>
+                            {/* key={i}> */}
+                            <Typography textColor="neutral800">
+                              {console.log(item[0], "item under td")}
+                              {item[0] && item[0][1] && item[0][1][i]
+                                ? item[0][1][i]
+                                : "---"}
+                            </Typography>
+                          </Td>
+                        ))}
                     </Tr>
                   ))}
                 </Tbody>
@@ -521,6 +659,31 @@ const HomePage = () => {
           </Box>
         )}
       </div>
+      <table ref={tableRef} style={{ display: "none" }}>
+        <thead>
+          <tr>
+            {uniqueAttributes.map((item) => (
+              <th key={item}>{item}</th>
+            ))}
+            <th>Sigma</th>
+          </tr>
+        </thead>
+        <tbody>
+          {superFinal.map((item, index) => (
+            <tr key={index}>
+              {uniqueAttributes.length > 0 &&
+                uniqueAttributes.map((i) => (
+                  <td key={i}>
+                    {console.log(item[0], "item under td")}
+                    {item[0] && item[0][1] && item[0][1][i]
+                      ? item[0][1][i]
+                      : "---"}
+                  </td>
+                ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 };

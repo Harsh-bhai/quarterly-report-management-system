@@ -16,9 +16,12 @@
     "@strapi/strapi": "4.12.5",
     "better-sqlite3": "8.5.0",
     "html2pdf.js": "^0.10.1",
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.7.1",
     "pg": "^8.11.3",
     "strapi-plugin-multi-select": "^1.2.2",
-    "xlsx": "^0.18.5"
+    "xlsx": "^0.18.5",
+    "xlsx-populate": "^1.21.0"
   },
   "author": {
     "name": "A Strapi developer"
