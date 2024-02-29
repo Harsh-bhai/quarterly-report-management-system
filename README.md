@@ -169,25 +169,32 @@ fi
 ```bash
 #!/bin/bash
 
-# Shell script to calculate student grades
+echo "Enter marks for 5 subjects:"
 
-echo "Enter marks for 5 subjects (separated by space):"
-read marks
+read -p "Subject 1: " subject1
+read -p "Subject 2: " subject2
+read -p "Subject 3: " subject3
+read -p "Subject 4: " subject4
+read -p "Subject 5: " subject5
 
 # Calculate percentage
-total_marks=500
-percentage=$(echo "scale=2; ($marks / $total_marks) * 100" | bc)
+total_marks=$((subject1 + subject2 + subject3 + subject4 + subject5))
+percentage=$(echo "scale=2; $total_marks / 5" | bc)
 
-# Determine grade
+# Display percentage
+echo "Percentage: $percentage%"
+
+# Display grade based on criteria
 if (( $(echo "$percentage >= 60" | bc -l) )); then
-    echo "First division: $percentage%"
+    echo "Grade: First Division"
 elif (( $(echo "$percentage >= 50 && $percentage < 60" | bc -l) )); then
-    echo "Second division: $percentage%"
+    echo "Grade: Second Division"
 elif (( $(echo "$percentage >= 40 && $percentage < 50" | bc -l) )); then
-    echo "Third division: $percentage%"
+    echo "Grade: Third Division"
 else
-    echo "Fail: $percentage%"
+    echo "Grade: Fail"
 fi
+
 
 ```
 
