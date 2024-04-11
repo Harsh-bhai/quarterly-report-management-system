@@ -19,6 +19,7 @@ const Thirty = () => {
   const handleSubmit =async(e) => {
     e.preventDefault();
     let token=Cookies.get("jwtoken")
+    console.log("token",token)
     try {
       const data = {
         data: {
